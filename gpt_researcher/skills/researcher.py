@@ -9,6 +9,11 @@ from ..document import DocumentLoader, OnlineDocumentLoader, LangChainDocumentLo
 from ..utils.enum import ReportSource
 from ..utils.logging_config import get_json_handler
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from gpt_researcher.agent import GPTResearcher
+
 class ResearchConductor:
     """Manages and coordinates the research process."""
 

@@ -6,6 +6,7 @@ class ReportType(Enum):
     ResourceReport = "resource_report"
     OutlineReport = "outline_report"
     CustomReport = "custom_report"
+    BasicReport = "basic_report"
     DetailedReport = "detailed_report"
     SubtopicReport = "subtopic_report"
     DeepResearch = "deep"

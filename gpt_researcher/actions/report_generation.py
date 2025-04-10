@@ -19,8 +19,9 @@ async def write_report_introduction(
     context: str,
     agent_role_prompt: str,
     config: Config,
+    output_language: str = "english",
     websocket=None,
-    cost_callback: callable = None
+    cost_callback: callable = None,
 ) -> str:
     """
     Generate an introduction for the report.
@@ -45,11 +46,14 @@ async def write_report_introduction(
             api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{agent_role_prompt}"},
-                {"role": "user", "content": generate_report_introduction(
-                    question=query,
-                    research_summary=context,
-                    language=config.language
-                )},
+                {
+                    "role": "user",
+                    "content": generate_report_introduction(
+                        question=query,
+                        research_summary=context,
+                        language=output_language,
+                    ),
+                },
             ],
             temperature=0.25,
             stream=True,
@@ -69,8 +73,9 @@ async def write_conclusion(
     context: str,
     agent_role_prompt: str,
     config: Config,
+    output_language: str = "english",
     websocket=None,
-    cost_callback: callable = None
+    cost_callback: callable = None,
 ) -> str:
     """
     Write a conclusion for the report.
@@ -95,9 +100,12 @@ async def write_conclusion(
             api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{agent_role_prompt}"},
-                {"role": "user", "content": generate_report_conclusion(query=query,
-                                                                       report_content=context,
-                                                                       language=config.language)},
+                {
+                    "role": "user",
+                    "content": generate_report_conclusion(
+                        query=query, report_content=context, language=output_language
+                    ),
+                },
             ],
             temperature=0.25,
             stream=True,
@@ -118,7 +126,7 @@ async def summarize_url(
     role: str,
     config: Config,
     websocket=None,
-    cost_callback: callable = None
+    cost_callback: callable = None,
 ) -> str:
     """
     Summarize the content of a URL.
@@ -143,7 +151,10 @@ async def summarize_url(
             api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{role}"},
-                {"role": "user", "content": f"Summarize the following content from {url}:\n\n{content}"},
+                {
+                    "role": "user",
+                    "content": f"Summarize the following content from {url}:\n\n{content}",
+                },
             ],
             temperature=0.25,
             stream=True,
@@ -165,7 +176,7 @@ async def generate_draft_section_titles(
     role: str,
     config: Config,
     websocket=None,
-    cost_callback: callable = None
+    cost_callback: callable = None,
 ) -> List[str]:
     """
     Generate draft section titles for the report.
@@ -190,8 +201,12 @@ async def generate_draft_section_titles(
             api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{role}"},
-                {"role": "user", "content": generate_draft_titles_prompt(
-                    current_subtopic, query, context)},
+                {
+                    "role": "user",
+                    "content": generate_draft_titles_prompt(
+                        current_subtopic, query, context
+                    ),
+                },
             ],
             temperature=0.25,
             stream=True,
@@ -214,12 +229,13 @@ async def generate_report(
     tone: Tone,
     report_source: str,
     websocket,
-    cfg,
+    cfg: Config,
+    output_language: str = "english",
     main_topic: str = "",
     existing_headers: list = [],
     relevant_written_contents: list = [],
     cost_callback: callable = None,
-    custom_prompt: str = "", # This can be any prompt the user chooses with the context
+    custom_prompt: str = "",  # This can be any prompt the user chooses with the context
     headers=None,
 ):
     """
@@ -246,11 +262,11 @@ async def generate_report(
     report = ""
 
     if report_type == "subtopic_report":
-        content = f"{generate_prompt(query, existing_headers, relevant_written_contents, main_topic, context, report_format=cfg.report_format, tone=tone, total_words=cfg.total_words, language=cfg.language)}"
+        content = f"{generate_prompt(query, existing_headers, relevant_written_contents, main_topic, context, report_format=cfg.report_format, tone=tone, total_words=cfg.total_words, language=output_language)}"
     elif custom_prompt:
         content = f"{custom_prompt}\n\nContext: {context}"
     else:
-        content = f"{generate_prompt(query, context, report_source, report_format=cfg.report_format, tone=tone, total_words=cfg.total_words, language=cfg.language)}"
+        content = f"{generate_prompt(query, context, report_source, report_format=cfg.report_format, tone=tone, total_words=cfg.total_words, language=output_language)}"
     try:
         report = await create_chat_completion(
             llm_provider=smart_model.provider,

@@ -12,7 +12,7 @@ from gpt_researcher import GPTResearcher
 from backend.utils import write_md_to_pdf, write_md_to_word, write_text_to_md
 from pathlib import Path
 from datetime import datetime
-from fastapi import HTTPException
+from fastapi import HTTPException, WebSocket
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -129,6 +129,7 @@ async def handle_start_command(websocket, data: str, manager):
         headers,
         report_source,
         query_domains,
+        output_language,
     ) = extract_command_data(json_data)
 
     if not task or not report_type:
@@ -157,6 +158,7 @@ async def handle_start_command(websocket, data: str, manager):
         websocket,
         headers,
         query_domains,
+        output_language,
     )
     report = str(report)
     file_paths = await generate_report_files(report, sanitized_filename)
@@ -246,7 +248,7 @@ async def execute_multi_agents(manager) -> Any:
         return JSONResponse(status_code=400, content={"message": "No active WebSocket connection"})
 
 
-async def handle_websocket_communication(websocket, manager):
+async def handle_websocket_communication(websocket: WebSocket, manager: "WebSocketManager"):
     running_task: asyncio.Task | None = None
 
     def run_long_running_task(awaitable: Awaitable) -> asyncio.Task:
@@ -314,4 +316,5 @@ def extract_command_data(json_data: Dict) -> tuple:
         json_data.get("headers", {}),
         json_data.get("report_source"),
         json_data.get("query_domains", []),
+        json_data.get("output_language", "english"),
     )

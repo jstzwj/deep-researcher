@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
@@ -14,8 +14,10 @@ from .costs import estimate_llm_cost
 from .validators import Subtopics
 import os
 
+if TYPE_CHECKING:
+    from gpt_researcher.config import Config
 
-def get_llm(llm_provider, base_url: str | None = None, api_key: str | None = None, **kwargs):
+def get_llm(llm_provider: str, base_url: str | None = None, api_key: str | None = None, **kwargs):
     from gpt_researcher.llm_provider import GenericLLMProvider
     return GenericLLMProvider.from_provider(llm_provider, base_url=base_url, api_key=api_key, **kwargs)
 
@@ -86,7 +88,7 @@ async def create_chat_completion(
     raise RuntimeError(f"Failed to get response from {llm_provider} API")
 
 
-async def construct_subtopics(task: str, data: str, config, subtopics: list = []) -> list:
+async def construct_subtopics(task: str, data: str, config: "Config", subtopics: list = []) -> list:
     """
     Construct subtopics based on the given task and data.
 
@@ -99,6 +101,7 @@ async def construct_subtopics(task: str, data: str, config, subtopics: list = []
     Returns:
         list: A list of constructed subtopics.
     """
+    smart_model = max(config.chat_models, key=lambda x: x.model_size)
     try:
         parser = PydanticOutputParser(pydantic_object=Subtopics)
 
@@ -110,17 +113,17 @@ async def construct_subtopics(task: str, data: str, config, subtopics: list = []
         )
 
         kwargs = {
-            'model': config.smart_llm_model,
+            'model': smart_model.model,
             **(config.llm_kwargs or {})
         }
 
-        if config.smart_llm_model in SUPPORT_REASONING_EFFORT_MODELS:
+        if smart_model.model in SUPPORT_REASONING_EFFORT_MODELS:
             kwargs['reasoning_effort'] = ReasoningEfforts.High.value
         else:
             kwargs['temperature'] = config.temperature
             kwargs['max_tokens'] = config.smart_token_limit
 
-        provider = get_llm(config.smart_llm_provider, **kwargs)
+        provider = get_llm(smart_model.llm_provider, base_url=smart_model.base_url, api_key=smart_model.api_key, **kwargs)
 
         model = provider.llm
 

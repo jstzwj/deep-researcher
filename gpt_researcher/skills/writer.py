@@ -7,14 +7,19 @@ from ..actions import (
     generate_report,
     generate_draft_section_titles,
     write_report_introduction,
-    write_conclusion
+    write_conclusion,
 )
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from gpt_researcher.agent import GPTResearcher
 
 
 class ReportGenerator:
     """Generates reports based on research data."""
 
-    def __init__(self, researcher):
+    def __init__(self, researcher: "GPTResearcher"):
         self.researcher = researcher
         self.research_params = {
             "query": self.researcher.query,
@@ -22,12 +27,19 @@ class ReportGenerator:
             "report_type": self.researcher.report_type,
             "report_source": self.researcher.report_source,
             "tone": self.researcher.tone,
+            "output_language": self.researcher.output_language,
             "websocket": self.researcher.websocket,
             "cfg": self.researcher.cfg,
             "headers": self.researcher.headers,
         }
 
-    async def write_report(self, existing_headers: list = [], relevant_written_contents: list = [], ext_context=None, custom_prompt="") -> str:
+    async def write_report(
+        self,
+        existing_headers: list = [],
+        relevant_written_contents: list = [],
+        ext_context=None,
+        custom_prompt="",
+    ) -> str:
         """
         Write a report based on existing headers and relevant contents.
 
@@ -49,7 +61,7 @@ class ReportGenerator:
                 json.dumps(research_images),
                 self.researcher.websocket,
                 True,
-                research_images
+                research_images,
             )
 
         context = ext_context or self.researcher.context
@@ -66,12 +78,14 @@ class ReportGenerator:
         report_params["custom_prompt"] = custom_prompt
 
         if self.researcher.report_type == "subtopic_report":
-            report_params.update({
-                "main_topic": self.researcher.parent_query,
-                "existing_headers": existing_headers,
-                "relevant_written_contents": relevant_written_contents,
-                "cost_callback": self.researcher.add_costs,
-            })
+            report_params.update(
+                {
+                    "main_topic": self.researcher.parent_query,
+                    "existing_headers": existing_headers,
+                    "relevant_written_contents": relevant_written_contents,
+                    "cost_callback": self.researcher.add_costs,
+                }
+            )
         else:
             report_params["cost_callback"] = self.researcher.add_costs
 
@@ -111,6 +125,7 @@ class ReportGenerator:
             config=self.researcher.cfg,
             agent_role_prompt=self.researcher.cfg.agent_role or self.researcher.role,
             cost_callback=self.researcher.add_costs,
+            output_language=self.researcher.output_language,
             websocket=self.researcher.websocket,
         )
 
@@ -139,6 +154,7 @@ class ReportGenerator:
             context=self.researcher.context,
             agent_role_prompt=self.researcher.cfg.agent_role or self.researcher.role,
             config=self.researcher.cfg,
+            output_language=self.researcher.output_language,
             websocket=self.researcher.websocket,
             cost_callback=self.researcher.add_costs,
         )

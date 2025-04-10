@@ -126,7 +126,8 @@ html {
   input:focus,
   select:hover,
   select:focus {
-    background-color: rgba(241, 241, 241, 0.2);
+    color: #ccc;
+    background-color: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
@@ -439,6 +440,7 @@ html {
     margin-top: 15px;
   }
   
+  /* Custom radio button styling */
   .custom-control {
     padding-left: 2.5rem;
     margin-bottom: 0.5rem;
@@ -469,7 +471,11 @@ html {
     content: "";
     background-color: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 0.25rem;
+  }
+  
+  /* Radio button specific styling */
+  .custom-radio .custom-control-label::before {
+    border-radius: 50%;
   }
   
   .custom-control-label::after {
@@ -483,14 +489,14 @@ html {
     background: no-repeat 50% / 50% 50%;
   }
   
-  .custom-control-input:checked ~ .custom-control-label::before {
+  .custom-radio .custom-control-input:checked ~ .custom-control-label::before {
     color: #fff;
     border-color: #007bff;
     background-color: #007bff;
   }
   
-  .custom-control-input:checked ~ .custom-control-label::after {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+  .custom-radio .custom-control-input:checked ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
   }
   
   .custom-control-input:focus ~ .custom-control-label::before {

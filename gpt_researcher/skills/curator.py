@@ -1,15 +1,19 @@
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, TYPE_CHECKING
 import json
+
+from gpt_researcher.config.variables import base
 from ..config.config import Config
 from ..utils.llm import create_chat_completion
 from ..prompts import curate_sources as rank_sources_prompt
 from ..actions import stream_output
 
+if TYPE_CHECKING:
+    from gpt_researcher.agent import GPTResearcher
 
 class SourceCurator:
     """Ranks sources and curates data based on their relevance, credibility and reliability."""
 
-    def __init__(self, researcher):
+    def __init__(self, researcher: "GPTResearcher"):
         self.researcher = researcher
 
     async def curate_sources(
@@ -36,11 +40,16 @@ class SourceCurator:
                 f"⚖️ Evaluating and curating sources by credibility and relevance...",
                 self.researcher.websocket,
             )
+        
+        smart_model = max(self.researcher.cfg.chat_models, key=lambda x: x.model_size)
 
         response = ""
         try:
             response = await create_chat_completion(
-                model=self.researcher.cfg.smart_llm_model,
+                llm_provider=smart_model.provider,
+                model=smart_model.model,
+                base_url=smart_model.base_url,
+                api_key=smart_model.api_key,
                 messages=[
                     {"role": "system", "content": f"{self.researcher.role}"},
                     {"role": "user", "content": rank_sources_prompt(
@@ -48,8 +57,7 @@ class SourceCurator:
                 ],
                 temperature=0.2,
                 max_tokens=8000,
-                llm_provider=self.researcher.cfg.smart_llm_provider,
-                llm_kwargs=self.researcher.cfg.llm_kwargs,
+                llm_kwargs=smart_model.llm_kwargs,
                 cost_callback=self.researcher.add_costs,
             )
 

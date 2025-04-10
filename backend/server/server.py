@@ -46,6 +46,7 @@ class ResearchRequest(BaseModel):
     report_type: str
     report_source: str
     tone: str
+    output_language: str
     headers: dict | None = None
     repo_name: str
     branch_name: str
@@ -132,6 +133,7 @@ async def write_report(research_request: ResearchRequest, research_id: str = Non
         stream_output=None,
         headers=research_request.headers,
         query_domains=[],
+        output_language=research_request.output_language,
         config_path="",
         return_researcher=True
     )

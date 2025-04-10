@@ -34,6 +34,7 @@ class GPTResearcher:
         report_format: str = "markdown",
         report_source: str = ReportSource.Web.value,
         tone: Tone = Tone.Objective,
+        output_language: str = "english",
         source_urls: list[str] | None = None,
         document_urls: list[str] | None = None,
         complement_source_urls: bool = False,
@@ -67,6 +68,7 @@ class GPTResearcher:
         self.report_format = report_format
         self.max_subtopics = max_subtopics
         self.tone = tone if isinstance(tone, Tone) else Tone.Objective
+        self.output_language = output_language
         self.source_urls = source_urls
         self.document_urls = document_urls
         self.complement_source_urls = complement_source_urls

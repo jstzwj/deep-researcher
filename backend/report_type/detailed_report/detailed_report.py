@@ -16,6 +16,7 @@ class DetailedReport:
         query_domains: List[str] = [],
         config_path: str = None,
         tone: Any = "",
+        output_language: str = "english",
         websocket: WebSocket = None,
         subtopics: List[Dict] = [],
         headers: Optional[Dict] = None,
@@ -29,6 +30,7 @@ class DetailedReport:
         self.query_domains = query_domains
         self.config_path = config_path
         self.tone = tone
+        self.output_language = output_language
         self.websocket = websocket
         self.subtopics = subtopics
         self.headers = headers or {}
@@ -43,6 +45,7 @@ class DetailedReport:
             document_urls=self.document_urls,
             config_path=self.config_path,
             tone=self.tone,
+            output_language=self.output_language,
             websocket=self.websocket,
             headers=self.headers,
             complement_source_urls=self.complement_source_urls

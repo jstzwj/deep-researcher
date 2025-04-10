@@ -10,10 +10,11 @@ from gpt_researcher.utils.llm import create_chat_completion
 async def call_model(
     prompt: list,
     model: str,
+    llm_provider: str,
+    base_url: str | None = None,
+    api_key: str | None = None,
     response_format: str | None = None,
 ):
-
-    cfg = Config()
     lc_messages = convert_openai_messages(prompt)
 
     try:
@@ -21,7 +22,7 @@ async def call_model(
             model=model,
             messages=lc_messages,
             temperature=0,
-            llm_provider=cfg.smart_llm_provider,
+            llm_provider=llm_provider,
             llm_kwargs=cfg.llm_kwargs,
             # cost_callback=cost_callback,
         )

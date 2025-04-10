@@ -1,7 +1,7 @@
 import asyncio
 import os
 import datetime
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from fastapi import WebSocket
 
@@ -35,7 +35,7 @@ class WebSocketManager:
                 message = await queue.get()
                 if message is None:  # Shutdown signal
                     break
-                    
+
                 if websocket in self.active_connections:
                     if message == "ping":
                         await websocket.send_text("pong")
@@ -54,7 +54,8 @@ class WebSocketManager:
             self.active_connections.append(websocket)
             self.message_queues[websocket] = asyncio.Queue()
             self.sender_tasks[websocket] = asyncio.create_task(
-                self.start_sender(websocket))
+                self.start_sender(websocket)
+            )
         except Exception as e:
             print(f"Error connecting websocket: {e}")
             if websocket in self.active_connections:
@@ -75,7 +76,19 @@ class WebSocketManager:
             except:
                 pass  # Connection might already be closed
 
-    async def start_streaming(self, task, report_type, report_source, source_urls, document_urls, tone, websocket, headers=None, query_domains=[]):
+    async def start_streaming(
+        self,
+        task: str,
+        report_type: str,
+        report_source: str,
+        source_urls: List[str],
+        document_urls: List[str],
+        tone: str,
+        websocket: WebSocket,
+        headers: Optional[Dict[str, str]] = None,
+        query_domains: List[str] = [],
+        output_language: str = "english"
+    ):
         """Start streaming the output."""
         tone = Tone[tone]
         # add customized JSON config file path here
@@ -83,7 +96,19 @@ class WebSocketManager:
             config_path = os.environ["CONFIG_PATH"]
         else:
             config_path = "default"
-        report = await run_agent(task, report_type, report_source, source_urls, document_urls, tone, websocket, headers=headers, query_domains=query_domains, config_path=config_path)
+        report = await run_agent(
+            task,
+            report_type,
+            report_source,
+            source_urls,
+            document_urls,
+            tone,
+            websocket,
+            headers=headers,
+            query_domains=query_domains,
+            output_language=output_language,
+            config_path=config_path,
+        )
         # Create new Chat Agent whenever a new report is written
         self.chat_agent = ChatAgentWithMemory(report, config_path, headers)
         return report
@@ -93,21 +118,41 @@ class WebSocketManager:
         if self.chat_agent:
             await self.chat_agent.chat(message, websocket)
         else:
-            await websocket.send_json({"type": "chat", "content": "Knowledge empty, please run the research first to obtain knowledge"})
+            await websocket.send_json(
+                {
+                    "type": "chat",
+                    "content": "Knowledge empty, please run the research first to obtain knowledge",
+                }
+            )
 
-async def run_agent(task, report_type, report_source, source_urls, document_urls, tone: Tone, websocket, stream_output=stream_output, headers=None, query_domains=[], config_path="", return_researcher=False):
-    """Run the agent."""    
+
+async def run_agent(
+    task,
+    report_type: str,
+    report_source: str,
+    source_urls: List[str],
+    document_urls: List[str],
+    tone: Tone,
+    websocket,
+    stream_output=stream_output,
+    headers=None,
+    query_domains: List[str] = [],
+    output_language: str= "english",
+    config_path: str = "",
+    return_researcher: bool = False,
+):
+    """Run the agent."""
     # Create logs handler for this research task
     logs_handler = CustomLogsHandler(websocket, task)
 
     # Initialize researcher based on report type
     if report_type == "multi_agents":
         report = await run_research_task(
-            query=task, 
+            query=task,
             websocket=logs_handler,  # Use logs_handler instead of raw websocket
-            stream_output=stream_output, 
-            tone=tone, 
-            headers=headers
+            stream_output=stream_output,
+            tone=tone,
+            headers=headers,
         )
         report = report.get("report", "")
 
@@ -120,13 +165,14 @@ async def run_agent(task, report_type, report_source, source_urls, document_urls
             source_urls=source_urls,
             document_urls=document_urls,
             tone=tone,
+            output_language=output_language,
             config_path=config_path,
             websocket=logs_handler,  # Use logs_handler instead of raw websocket
-            headers=headers
+            headers=headers,
         )
         report = await researcher.run()
-        
-    else:
+
+    elif report_type == ReportType.BasicReport.value:
         researcher = BasicReport(
             query=task,
             query_domains=query_domains,
@@ -135,11 +181,14 @@ async def run_agent(task, report_type, report_source, source_urls, document_urls
             source_urls=source_urls,
             document_urls=document_urls,
             tone=tone,
+            output_language=output_language,
             config_path=config_path,
             websocket=logs_handler,  # Use logs_handler instead of raw websocket
-            headers=headers
+            headers=headers,
         )
         report = await researcher.run()
+    else:
+        raise ValueError(f"Invalid report type: {report_type}")
 
     if report_type != "multi_agents" and return_researcher:
         return report, researcher.gpt_researcher

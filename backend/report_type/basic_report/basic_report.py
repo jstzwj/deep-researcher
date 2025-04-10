@@ -1,5 +1,5 @@
 from fastapi import WebSocket
-from typing import Any
+from typing import Any, List
 
 from gpt_researcher import GPTResearcher
 
@@ -8,12 +8,13 @@ class BasicReport:
     def __init__(
         self,
         query: str,
-        query_domains: list,
+        query_domains: List[str],
         report_type: str,
         report_source: str,
         source_urls,
         document_urls,
         tone: Any,
+        output_language: str,
         config_path: str,
         websocket: WebSocket,
         headers=None
@@ -25,6 +26,7 @@ class BasicReport:
         self.source_urls = source_urls
         self.document_urls = document_urls
         self.tone = tone
+        self.output_language = output_language
         self.config_path = config_path
         self.websocket = websocket
         self.headers = headers or {}
@@ -38,6 +40,7 @@ class BasicReport:
             source_urls=self.source_urls,
             document_urls=self.document_urls,
             tone=self.tone,
+            output_language=self.output_language,
             config_path=self.config_path,
             websocket=self.websocket,
             headers=self.headers
