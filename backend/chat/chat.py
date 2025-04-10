@@ -1,5 +1,6 @@
 from fastapi import WebSocket
 import uuid
+import json
 
 from gpt_researcher.utils.llm import get_llm
 from gpt_researcher.memory import Memory
@@ -16,38 +17,42 @@ class ChatAgentWithMemory:
     def __init__(
         self,
         report: str,
-        config_path,
+        config_path: str,
         headers,
         vector_store = None
     ):
         self.report = report
         self.headers = headers
-        self.config = Config(config_path)
+        with open(config_path, "r", encoding="utf-8") as f:
+            config_dict = json.loads(f.read())
+            
+        self.config: Config = Config.model_validate(config_dict)
         self.vector_store = vector_store
         self.graph = self.create_agent()
 
     def create_agent(self):
         """Create React Agent Graph"""
-        cfg = Config()
+        cfg = self.config
+        
+        smart_model = max(cfg.chat_models, key=lambda x: x.model_size)
 
         # Retrieve LLM using get_llm with settings from config
         provider = get_llm(
-            llm_provider=cfg.smart_llm_provider,
-            model=cfg.smart_llm_model,
+            llm_provider=smart_model.provider,
+            model=smart_model.model,
+            base_url=smart_model.base_url,
+            api_key=smart_model.api_key,
             temperature=0.35,
             max_tokens=cfg.smart_token_limit,
-            **self.config.llm_kwargs
+            **smart_model.llm_kwargs
         ).llm
 
         # If vector_store is not initialized, process documents and add to vector_store
         if not self.vector_store:
+            embedding_config = self.config.embeddings[0]
             documents = self._process_document(self.report)
             self.chat_config = {"configurable": {"thread_id": str(uuid.uuid4())}}
-            self.embedding = Memory(
-                cfg.embedding_provider,
-                cfg.embedding_model,
-                **cfg.embedding_kwargs
-            ).get_embeddings()
+            self.embedding = Memory(embedding_config).get_embeddings()
             self.vector_store = InMemoryVectorStore(self.embedding)
             self.vector_store.add_texts(documents)
 

@@ -1,0 +1,36 @@
+{
+    "retrievers": [
+        {
+            "provider": "tavily",
+            "api_key": "tvly-dev-xxxx"
+        }
+    ],
+    "embeddings": [
+        {
+            "provider": "siliconflow",
+            "model": "BAAI/bge-m3",
+            "api_key": "sk-xxxx",
+            "base_url": "https://api.siliconflow.cn/v1/"
+        }
+    ],
+    "chat_models": [
+        {
+            "provider": "siliconflow",
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "api_key": "sk-xxxx",
+            "base_url": "https://api.siliconflow.cn/v1/",
+            "model_size": 7e9,
+            "max_length": 8192,
+            "llm_kwargs": {}
+        },
+        {
+            "provider": "deepseek",
+            "model": "deepseek-chat",
+            "api_key": "sk-xxxx",
+            "base_url": "https://api.deepseek.com/v1/",
+            "model_size": 685e9,
+            "max_length": 8192,
+            "llm_kwargs": {}
+        }
+    ]
+}

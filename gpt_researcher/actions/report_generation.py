@@ -36,9 +36,13 @@ async def write_report_introduction(
     Returns:
         str: The generated introduction.
     """
+    smart_model = max(config.chat_models, key=lambda x: x.model_size)
     try:
         introduction = await create_chat_completion(
-            model=config.smart_llm_model,
+            llm_provider=smart_model.provider,
+            model=smart_model.model,
+            base_url=smart_model.base_url,
+            api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{agent_role_prompt}"},
                 {"role": "user", "content": generate_report_introduction(
@@ -48,11 +52,10 @@ async def write_report_introduction(
                 )},
             ],
             temperature=0.25,
-            llm_provider=config.smart_llm_provider,
             stream=True,
             websocket=websocket,
             max_tokens=config.smart_token_limit,
-            llm_kwargs=config.llm_kwargs,
+            llm_kwargs=smart_model.llm_kwargs,
             cost_callback=cost_callback,
         )
         return introduction
@@ -83,9 +86,13 @@ async def write_conclusion(
     Returns:
         str: The generated conclusion.
     """
+    smart_model = max(config.chat_models, key=lambda x: x.model_size)
     try:
         conclusion = await create_chat_completion(
-            model=config.smart_llm_model,
+            llm_provider=smart_model.provider,
+            model=smart_model.model,
+            base_url=smart_model.base_url,
+            api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{agent_role_prompt}"},
                 {"role": "user", "content": generate_report_conclusion(query=query,
@@ -93,11 +100,10 @@ async def write_conclusion(
                                                                        language=config.language)},
             ],
             temperature=0.25,
-            llm_provider=config.smart_llm_provider,
             stream=True,
             websocket=websocket,
             max_tokens=config.smart_token_limit,
-            llm_kwargs=config.llm_kwargs,
+            llm_kwargs=smart_model.llm_kwargs,
             cost_callback=cost_callback,
         )
         return conclusion
@@ -128,19 +134,22 @@ async def summarize_url(
     Returns:
         str: The summarized content.
     """
+    smart_model = max(config.chat_models, key=lambda x: x.model_size)
     try:
         summary = await create_chat_completion(
-            model=config.smart_llm_model,
+            llm_provider=smart_model.provider,
+            model=smart_model.model,
+            base_url=smart_model.base_url,
+            api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{role}"},
                 {"role": "user", "content": f"Summarize the following content from {url}:\n\n{content}"},
             ],
             temperature=0.25,
-            llm_provider=config.smart_llm_provider,
             stream=True,
             websocket=websocket,
             max_tokens=config.smart_token_limit,
-            llm_kwargs=config.llm_kwargs,
+            llm_kwargs=smart_model.llm_kwargs,
             cost_callback=cost_callback,
         )
         return summary
@@ -172,20 +181,23 @@ async def generate_draft_section_titles(
     Returns:
         List[str]: A list of generated section titles.
     """
+    smart_model = max(config.chat_models, key=lambda x: x.model_size)
     try:
         section_titles = await create_chat_completion(
-            model=config.smart_llm_model,
+            llm_provider=smart_model.provider,
+            model=smart_model.model,
+            base_url=smart_model.base_url,
+            api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{role}"},
                 {"role": "user", "content": generate_draft_titles_prompt(
                     current_subtopic, query, context)},
             ],
             temperature=0.25,
-            llm_provider=config.smart_llm_provider,
             stream=True,
             websocket=None,
             max_tokens=config.smart_token_limit,
-            llm_kwargs=config.llm_kwargs,
+            llm_kwargs=smart_model.llm_kwargs,
             cost_callback=cost_callback,
         )
         return section_titles.split("\n")
@@ -229,6 +241,7 @@ async def generate_report(
         report:
 
     """
+    smart_model = max(cfg.chat_models, key=lambda x: x.model_size)
     generate_prompt = get_prompt_by_report_type(report_type)
     report = ""
 
@@ -240,32 +253,36 @@ async def generate_report(
         content = f"{generate_prompt(query, context, report_source, report_format=cfg.report_format, tone=tone, total_words=cfg.total_words, language=cfg.language)}"
     try:
         report = await create_chat_completion(
-            model=cfg.smart_llm_model,
+            llm_provider=smart_model.provider,
+            model=smart_model.model,
+            base_url=smart_model.base_url,
+            api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{agent_role_prompt}"},
                 {"role": "user", "content": content},
             ],
             temperature=0.35,
-            llm_provider=cfg.smart_llm_provider,
             stream=True,
             websocket=websocket,
             max_tokens=cfg.smart_token_limit,
-            llm_kwargs=cfg.llm_kwargs,
+            llm_kwargs=smart_model.llm_kwargs,
             cost_callback=cost_callback,
         )
     except:
         try:
             report = await create_chat_completion(
-                model=cfg.smart_llm_model,
+                llm_provider=smart_model.provider,
+                model=smart_model.model,
+                base_url=smart_model.base_url,
+                api_key=smart_model.api_key,
                 messages=[
                     {"role": "user", "content": f"{agent_role_prompt}\n\n{content}"},
                 ],
                 temperature=0.35,
-                llm_provider=cfg.smart_llm_provider,
                 stream=True,
                 websocket=websocket,
                 max_tokens=cfg.smart_token_limit,
-                llm_kwargs=cfg.llm_kwargs,
+                llm_kwargs=smart_model.llm_kwargs,
                 cost_callback=cost_callback,
             )
         except Exception as e:

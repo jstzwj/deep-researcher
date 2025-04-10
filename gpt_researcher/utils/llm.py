@@ -15,17 +15,18 @@ from .validators import Subtopics
 import os
 
 
-def get_llm(llm_provider, **kwargs):
+def get_llm(llm_provider, base_url: str | None = None, api_key: str | None = None, **kwargs):
     from gpt_researcher.llm_provider import GenericLLMProvider
-    return GenericLLMProvider.from_provider(llm_provider, **kwargs)
-
+    return GenericLLMProvider.from_provider(llm_provider, base_url=base_url, api_key=api_key, **kwargs)
 
 async def create_chat_completion(
         messages: list[dict[str, str]],
+        llm_provider: str | None = None,
         model: str | None = None,
+        base_url: str | None = None,
+        api_key: str | None = None,
         temperature: float | None = 0.4,
         max_tokens: int | None = 4000,
-        llm_provider: str | None = None,
         stream: bool = False,
         websocket: Any | None = None,
         llm_kwargs: dict[str, Any] | None = None,
@@ -67,12 +68,7 @@ async def create_chat_completion(
         kwargs['temperature'] = temperature
         kwargs['max_tokens'] = max_tokens
 
-    if llm_provider == "openai":
-        base_url = os.environ.get("OPENAI_BASE_URL", None)
-        if base_url:
-            kwargs['openai_api_base'] = base_url
-
-    provider = get_llm(llm_provider, **kwargs)
+    provider = get_llm(llm_provider, base_url=base_url, api_key=api_key, **kwargs)
     response = ""
     # create response
     for _ in range(10):  # maximum of 10 attempts

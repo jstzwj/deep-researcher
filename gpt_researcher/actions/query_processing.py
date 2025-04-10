@@ -1,3 +1,4 @@
+from requests import api
 import json_repair
 
 from gpt_researcher.llm_provider.generic.base import ReasoningEfforts
@@ -20,8 +21,7 @@ async def get_search_results(query: str, retriever: Any, query_domains: List[str
     Returns:
         A list of search results
     """
-    search_retriever = retriever(query, query_domains=query_domains)
-    return search_retriever.search()
+    return retriever.search(query, query_domains=query_domains)
 
 async def generate_sub_queries(
     query: str,
@@ -53,15 +53,24 @@ async def generate_sub_queries(
         max_iterations=cfg.max_iterations or 3,
         context=context
     )
+    
+    models = cfg.chat_models
+    # Select model with max size
+    smart_model = max(models, key=lambda x: x.model_size)
+    strategic_model = max(models, key=lambda x: x.model_size)
 
     try:
         response = await create_chat_completion(
-            model=cfg.strategic_llm_model,
-            messages=[{"role": "user", "content": gen_queries_prompt}],
+            llm_provider=strategic_model.model,
+            model=strategic_model.model,
+            base_url=strategic_model.base_url,
+            api_key=strategic_model.api_key,
+            messages=[
+                {"role": "user", "content": gen_queries_prompt}
+            ],
             temperature=0.6,
-            llm_provider=cfg.strategic_llm_provider,
             max_tokens=None,
-            llm_kwargs=cfg.llm_kwargs,
+            llm_kwargs=strategic_model.llm_kwargs,
             reasoning_effort=ReasoningEfforts.High.value,
             cost_callback=cost_callback,
         )
@@ -70,12 +79,14 @@ async def generate_sub_queries(
         logger.warning(f"See https://github.com/assafelovic/gpt-researcher/issues/1022")
         try:
             response = await create_chat_completion(
-                model=cfg.strategic_llm_model,
+                llm_provider=strategic_model.provider,
+                model=strategic_model.model,
+                base_url=strategic_model.base_url,
+                api_key=strategic_model.api_key,
                 messages=[{"role": "user", "content": gen_queries_prompt}],
                 temperature=1,
-                llm_provider=cfg.strategic_llm_provider,
                 max_tokens=cfg.strategic_token_limit,
-                llm_kwargs=cfg.llm_kwargs,
+                llm_kwargs=strategic_model.llm_kwargs,
                 cost_callback=cost_callback,
             )
             logger.warning(f"Retrying with max_tokens={cfg.strategic_token_limit} successful.")
@@ -83,12 +94,14 @@ async def generate_sub_queries(
             logger.warning(f"Retrying with max_tokens={cfg.strategic_token_limit} failed.")
             logger.warning(f"Error with strategic LLM: {e}. Falling back to smart LLM.")
             response = await create_chat_completion(
-                model=cfg.smart_llm_model,
+                llm_provider=smart_model.provider,
+                model=smart_model.model,
+                base_url=smart_model.base_url,
+                api_key=smart_model.api_key,
                 messages=[{"role": "user", "content": gen_queries_prompt}],
                 temperature=cfg.temperature,
                 max_tokens=cfg.smart_token_limit,
-                llm_provider=cfg.smart_llm_provider,
-                llm_kwargs=cfg.llm_kwargs,
+                llm_kwargs=smart_model.llm_kwargs,
                 cost_callback=cost_callback,
             )
 

@@ -2,17 +2,17 @@ import asyncio
 import random
 import logging
 import os
+
 from ..actions.utils import stream_output
 from ..actions.query_processing import plan_research_outline, get_search_results
 from ..document import DocumentLoader, OnlineDocumentLoader, LangChainDocumentLoader
 from ..utils.enum import ReportSource
 from ..utils.logging_config import get_json_handler
 
-
 class ResearchConductor:
     """Manages and coordinates the research process."""
 
-    def __init__(self, researcher):
+    def __init__(self, researcher: "GPTResearcher"):
         self.researcher = researcher
         self.logger = logging.getLogger('research')
         self.json_handler = get_json_handler()
@@ -358,12 +358,9 @@ class ResearchConductor:
 
         # Iterate through all retrievers
         for retriever_class in self.researcher.retrievers:
-            # Instantiate the retriever with the sub-query
-            retriever = retriever_class(query, query_domains=query_domains)
-
             # Perform the search using the current retriever
             search_results = await asyncio.to_thread(
-                retriever.search, max_results=self.researcher.cfg.max_search_results_per_query
+                retriever_class.search, query=query, query_domains=query_domains, max_results=self.researcher.cfg.max_search_results_per_query
             )
 
             # Collect new URLs from search results

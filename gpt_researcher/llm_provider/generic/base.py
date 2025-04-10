@@ -55,12 +55,12 @@ class GenericLLMProvider:
         self.llm = llm
 
     @classmethod
-    def from_provider(cls, provider: str, **kwargs: Any):
+    def from_provider(cls, provider: str, base_url: str | None = None, api_key: str | None = None, **kwargs: Any):
         if provider == "openai":
             _check_pkg("langchain_openai")
             from langchain_openai import ChatOpenAI
 
-            llm = ChatOpenAI(**kwargs)
+            llm = ChatOpenAI(openai_api_base=base_url, openai_api_key=api_key, **kwargs)
         elif provider == "anthropic":
             _check_pkg("langchain_anthropic")
             from langchain_anthropic import ChatAnthropic
@@ -100,7 +100,7 @@ class GenericLLMProvider:
             _check_pkg("langchain_ollama")
             from langchain_ollama import ChatOllama
             
-            llm = ChatOllama(base_url=os.environ["OLLAMA_BASE_URL"], **kwargs)
+            llm = ChatOllama(base_url=base_url, api_key=api_key, **kwargs)
         elif provider == "together":
             _check_pkg("langchain_together")
             from langchain_together import ChatTogether
@@ -146,10 +146,16 @@ class GenericLLMProvider:
             _check_pkg("langchain_openai")
             from langchain_openai import ChatOpenAI
 
-            llm = ChatOpenAI(openai_api_base='https://api.deepseek.com',
-                     openai_api_key=os.environ["DEEPSEEK_API_KEY"],
-                     **kwargs
-                )
+            llm = ChatOpenAI(openai_api_base=base_url,
+                     openai_api_key=api_key,
+                     **kwargs)
+        elif provider == "siliconflow":
+            _check_pkg("langchain_openai")
+            from langchain_openai import ChatOpenAI
+
+            llm = ChatOpenAI(openai_api_base=base_url,
+                     openai_api_key=api_key,
+                     **kwargs)
         elif provider == "litellm":
             _check_pkg("langchain_community")
             from langchain_community.chat_models.litellm import ChatLiteLLM

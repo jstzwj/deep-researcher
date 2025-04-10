@@ -12,7 +12,11 @@ class TavilySearch:
     Tavily API Retriever
     """
 
-    def __init__(self, query, headers=None, topic="general", query_domains=None):
+    def __init__(
+        self,
+        base_url="https://api.tavily.com/search",
+        api_key=""
+    ):
         """
         Initializes the TavilySearch object.
 
@@ -22,33 +26,11 @@ class TavilySearch:
             topic (str, optional): The topic for the search. Defaults to "general".
             query_domains (list, optional): List of domains to include in the search. Defaults to None.
         """
-        self.query = query
-        self.headers = headers or {}
-        self.topic = topic
-        self.base_url = "https://api.tavily.com/search"
-        self.api_key = self.get_api_key()
+        self.base_url = base_url
+        self.api_key = api_key
         self.headers = {
             "Content-Type": "application/json",
         }
-        self.query_domains = query_domains or None
-
-    def get_api_key(self):
-        """
-        Gets the Tavily API key
-        Returns:
-
-        """
-        api_key = self.headers.get("tavily_api_key")
-        if not api_key:
-            try:
-                api_key = os.environ["TAVILY_API_KEY"]
-            except KeyError:
-                print(
-                    "Tavily API key not found, set to blank. If you need a retriver, please set the TAVILY_API_KEY environment variable."
-                )
-                return ""
-        return api_key
-
 
     def _search(
         self,
@@ -92,21 +74,21 @@ class TavilySearch:
         else:
             # Raises a HTTPError if the HTTP request returned an unsuccessful status code
             response.raise_for_status()
-
-    def search(self, max_results=10):
+    
+    def search(self, query:str, topic="general", query_domains=None, max_results=10):
         """
         Searches the query
         Returns:
-
+            A list of search results
         """
         try:
             # Search the query
             results = self._search(
-                self.query,
+                query,
                 search_depth="basic",
                 max_results=max_results,
-                topic=self.topic,
-                include_domains=self.query_domains,
+                topic=topic,
+                include_domains=query_domains,
             )
             sources = results.get("results", [])
             if not sources:

@@ -1,4 +1,5 @@
 import asyncio
+import os
 import datetime
 from typing import Dict, List
 
@@ -78,7 +79,10 @@ class WebSocketManager:
         """Start streaming the output."""
         tone = Tone[tone]
         # add customized JSON config file path here
-        config_path = "default"
+        if "CONFIG_PATH" in os.environ:
+            config_path = os.environ["CONFIG_PATH"]
+        else:
+            config_path = "default"
         report = await run_agent(task, report_type, report_source, source_urls, document_urls, tone, websocket, headers=headers, query_domains=query_domains, config_path=config_path)
         # Create new Chat Agent whenever a new report is written
         self.chat_agent = ChatAgentWithMemory(report, config_path, headers)

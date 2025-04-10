@@ -3,9 +3,10 @@ import re
 import json_repair
 from ..utils.llm import create_chat_completion
 from ..prompts import auto_agent_instructions
+from ..config import Config
 
 async def choose_agent(
-    query, cfg, parent_query=None, cost_callback: callable = None, headers=None
+    query, cfg: Config, parent_query=None, cost_callback: callable = None, headers=None
 ):
     """
     Chooses the agent automatically
@@ -22,17 +23,23 @@ async def choose_agent(
     """
     query = f"{parent_query} - {query}" if parent_query else f"{query}"
     response = None  # Initialize response to ensure it's defined
-
+    
+    models = cfg.chat_models
+    # Select model with max size
+    smart_model = max(models, key=lambda x: x.model_size)
+    
     try:
         response = await create_chat_completion(
-            model=cfg.smart_llm_model,
+            llm_provider=smart_model.provider,
+            model=smart_model.model,
+            base_url=smart_model.base_url,
+            api_key=smart_model.api_key,
             messages=[
                 {"role": "system", "content": f"{auto_agent_instructions()}"},
                 {"role": "user", "content": f"task: {query}"},
             ],
             temperature=0.15,
-            llm_provider=cfg.smart_llm_provider,
-            llm_kwargs=cfg.llm_kwargs,
+            llm_kwargs=smart_model.llm_kwargs,
             cost_callback=cost_callback,
         )
 
@@ -43,7 +50,7 @@ async def choose_agent(
         return await handle_json_error(response)
 
 
-async def handle_json_error(response):
+async def handle_json_error(response: str):
     try:
         agent_dict = json_repair.loads(response)
         if agent_dict.get("server") and agent_dict.get("agent_role_prompt"):

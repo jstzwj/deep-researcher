@@ -56,7 +56,12 @@ class GPTResearcher:
     ):
         self.query = query
         self.report_type = report_type
-        self.cfg = Config(config_path)
+        if config_path:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+        else:
+            config = DEFAULT_CONFIG
+        self.cfg: Config = Config.model_validate(config)
         self.llm = GenericLLMProvider(self.cfg)
         self.report_source = report_source if report_source else getattr(self.cfg, 'report_source', None)
         self.report_format = report_format
@@ -82,9 +87,7 @@ class GPTResearcher:
         self.headers = headers or {}
         self.research_costs = 0.0
         self.retrievers = get_retrievers(self.headers, self.cfg)
-        self.memory = Memory(
-            self.cfg.embedding_provider, self.cfg.embedding_model, **self.cfg.embedding_kwargs
-        )
+        self.memory = Memory(self.cfg.embeddings[0])
         self.log_handler = log_handler
 
         # Initialize components

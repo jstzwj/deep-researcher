@@ -41,6 +41,13 @@ class Scraper:
         if self.scraper == "firecrawl":
             self._check_pkg(self.scraper)
         self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
+
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+        handler.encoding = 'utf-8'
+        self.logger.addHandler(handler)
+
         self.worker_pool = worker_pool
 
     async def run(self):

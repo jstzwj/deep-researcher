@@ -1,6 +1,6 @@
-from ..config.config import Config
+from ..config.config import Config, RetrieverConfig
 
-def get_retriever(retriever: str):
+def get_retriever(retriever_config: RetrieverConfig):
     """
     Gets the retriever
     Args:
@@ -10,59 +10,59 @@ def get_retriever(retriever: str):
         retriever: Retriever class
 
     """
-    match retriever:
+    match retriever_config.provider:
         case "google":
             from gpt_researcher.retrievers import GoogleSearch
 
-            return GoogleSearch
+            return GoogleSearch()
         case "searx":
             from gpt_researcher.retrievers import SearxSearch
 
-            return SearxSearch
+            return SearxSearch()
         case "searchapi":
             from gpt_researcher.retrievers import SearchApiSearch
 
-            return SearchApiSearch
+            return SearchApiSearch()
         case "serpapi":
             from gpt_researcher.retrievers import SerpApiSearch
 
-            return SerpApiSearch
+            return SerpApiSearch()
         case "serper":
             from gpt_researcher.retrievers import SerperSearch
 
-            return SerperSearch
+            return SerperSearch()
         case "duckduckgo":
             from gpt_researcher.retrievers import Duckduckgo
 
-            return Duckduckgo
+            return Duckduckgo()
         case "bing":
             from gpt_researcher.retrievers import BingSearch
 
-            return BingSearch
+            return BingSearch()
         case "arxiv":
             from gpt_researcher.retrievers import ArxivSearch
 
-            return ArxivSearch
+            return ArxivSearch()
         case "tavily":
             from gpt_researcher.retrievers import TavilySearch
 
-            return TavilySearch
+            return TavilySearch(api_key=retriever_config.api_key)
         case "exa":
             from gpt_researcher.retrievers import ExaSearch
 
-            return ExaSearch
+            return ExaSearch()
         case "semantic_scholar":
             from gpt_researcher.retrievers import SemanticScholarSearch
 
-            return SemanticScholarSearch
+            return SemanticScholarSearch()
         case "pubmed_central":
             from gpt_researcher.retrievers import PubMedCentralSearch
 
-            return PubMedCentralSearch
+            return PubMedCentralSearch()
         case "custom":
             from gpt_researcher.retrievers import CustomRetriever
 
-            return CustomRetriever
+            return CustomRetriever()
 
         case _:
             return None
@@ -80,27 +80,12 @@ def get_retrievers(headers: dict[str, str], cfg: Config):
         list: A list of retriever classes to be used for searching.
     """
     # Check headers first for multiple retrievers
-    if headers.get("retrievers"):
-        retrievers = headers.get("retrievers").split(",")
-    # If not found, check headers for a single retriever
-    elif headers.get("retriever"):
-        retrievers = [headers.get("retriever")]
-    # If not in headers, check config for multiple retrievers
-    elif cfg.retrievers:
-        retrievers = cfg.retrievers
-    # If not found, check config for a single retriever
-    elif cfg.retriever:
-        retrievers = [cfg.retriever]
+    if cfg.retrievers:
+        retriever_configs = cfg.retrievers
     # If still not set, use default retriever
     else:
-        retrievers = [get_default_retriever().__name__]
+        retriever_configs = [get_default_retriever()]
 
     # Convert retriever names to actual retriever classes
     # Use get_default_retriever() as a fallback for any invalid retriever names
-    return [get_retriever(r) or get_default_retriever() for r in retrievers]
-
-
-def get_default_retriever():
-    from gpt_researcher.retrievers import TavilySearch
-
-    return TavilySearch
+    return [get_retriever(cfg) for cfg in retriever_configs]
