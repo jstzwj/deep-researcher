@@ -184,6 +184,7 @@ class ReportGenerator:
             data=self.researcher.context,
             config=self.researcher.cfg,
             subtopics=self.researcher.subtopics,
+            language=self.researcher.output_language,
         )
 
         if self.researcher.verbose:
@@ -211,6 +212,7 @@ class ReportGenerator:
             current_subtopic=current_subtopic,
             context=self.researcher.context,
             role=self.researcher.cfg.agent_role or self.researcher.role,
+            language=self.researcher.output_language,
             websocket=self.researcher.websocket,
             config=self.researcher.cfg,
             cost_callback=self.researcher.add_costs,

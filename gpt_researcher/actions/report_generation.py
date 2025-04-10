@@ -175,6 +175,7 @@ async def generate_draft_section_titles(
     context: str,
     role: str,
     config: Config,
+    language: str = "english",
     websocket=None,
     cost_callback: callable = None,
 ) -> List[str]:
@@ -204,7 +205,7 @@ async def generate_draft_section_titles(
                 {
                     "role": "user",
                     "content": generate_draft_titles_prompt(
-                        current_subtopic, query, context
+                        current_subtopic, query, context, language=language
                     ),
                 },
             ],

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, TYPE_CHECKING
+from typing import Any, List,TYPE_CHECKING
 
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
@@ -88,7 +88,7 @@ async def create_chat_completion(
     raise RuntimeError(f"Failed to get response from {llm_provider} API")
 
 
-async def construct_subtopics(task: str, data: str, config: "Config", subtopics: list = []) -> list:
+async def construct_subtopics(task: str, data: str, config: "Config", subtopics: List[str] = [], language: str = "english") -> list:
     """
     Construct subtopics based on the given task and data.
 
@@ -107,7 +107,7 @@ async def construct_subtopics(task: str, data: str, config: "Config", subtopics:
 
         prompt = PromptTemplate(
             template=generate_subtopics_prompt(),
-            input_variables=["task", "data", "subtopics", "max_subtopics"],
+            input_variables=["task", "data", "subtopics", "max_subtopics", "language"],
             partial_variables={
                 "format_instructions": parser.get_format_instructions()},
         )
@@ -133,7 +133,8 @@ async def construct_subtopics(task: str, data: str, config: "Config", subtopics:
             "task": task,
             "data": data,
             "subtopics": subtopics,
-            "max_subtopics": config.max_subtopics
+            "max_subtopics": config.max_subtopics,
+            "language": language,
         })
 
         return output

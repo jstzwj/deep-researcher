@@ -342,6 +342,7 @@ and research data:
 - Finally order the subtopics by their tasks, in a relevant and meaningful order which is presentable in a detailed report
 
 "IMPORTANT!":
+- You must write the following subtopics in the following language: {language}
 - Every subtopic MUST be relevant to the main topic and provided research data ONLY!
 
 {format_instructions}
@@ -429,7 +430,8 @@ def generate_draft_titles_prompt(
     current_subtopic: str,
     main_topic: str,
     context: str,
-    max_subsections: int = 5
+    max_subsections: int = 5,
+    language: str = "english",
 ) -> str:
     return f"""
 "Context":
@@ -456,6 +458,7 @@ Provide the draft headers in a list format using markdown syntax, for example:
 - The focus MUST be on the main topic! You MUST Leave out any information un-related to it!
 - Must NOT have any introduction, conclusion, summary or reference section.
 - Focus solely on creating headers, not content.
+- Write in the {language} language.
 """
 
 

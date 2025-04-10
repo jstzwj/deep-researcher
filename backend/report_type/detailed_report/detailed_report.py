@@ -109,6 +109,7 @@ class DetailedReport:
             agent=self.gpt_researcher.agent,
             role=self.gpt_researcher.role,
             tone=self.tone,
+            output_language=self.output_language,
             complement_source_urls=self.complement_source_urls,
             source_urls=self.source_urls,
             config_path=self.config_path,
