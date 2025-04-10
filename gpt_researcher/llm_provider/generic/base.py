@@ -25,7 +25,8 @@ _SUPPORTED_PROVIDERS = {
     "deepseek",
     "litellm",
     "gigachat",
-    "openrouter"
+    "openrouter",
+    "siliconflow"
 }
 
 NO_SUPPORT_TEMPERATURE_MODELS = [

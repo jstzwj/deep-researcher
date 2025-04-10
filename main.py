@@ -12,7 +12,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         # File handler for general application logs
-        logging.FileHandler('logs/app.log'),
+        logging.FileHandler('logs/app.log', encoding='utf-8'),
         # Stream handler for console output
         logging.StreamHandler()
     ]

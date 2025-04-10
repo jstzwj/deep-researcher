@@ -61,7 +61,7 @@ async def generate_sub_queries(
 
     try:
         response = await create_chat_completion(
-            llm_provider=strategic_model.model,
+            llm_provider=strategic_model.provider,
             model=strategic_model.model,
             base_url=strategic_model.base_url,
             api_key=strategic_model.api_key,
