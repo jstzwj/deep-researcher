@@ -110,9 +110,10 @@ class DetailedReport:
             role=self.gpt_researcher.role,
             tone=self.tone,
             complement_source_urls=self.complement_source_urls,
-            source_urls=self.source_urls
+            source_urls=self.source_urls,
+            config_path=self.config_path,
         )
-
+        
         subtopic_assistant.context = list(set(self.global_context))
         await subtopic_assistant.conduct_research()
 

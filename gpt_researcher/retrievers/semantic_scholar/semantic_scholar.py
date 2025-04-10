@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Literal
 
 import requests
 
@@ -11,26 +11,31 @@ class SemanticScholarSearch:
     BASE_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
     VALID_SORT_CRITERIA = ["relevance", "citationCount", "publicationDate"]
 
-    def __init__(self, query: str, sort: str = "relevance", query_domains=None):
+    def __init__(self):
         """
         Initialize the SemanticScholarSearch class with a query and sort criterion.
-
-        :param query: Search query string
-        :param sort: Sort criterion ('relevance', 'citationCount', 'publicationDate')
         """
-        self.query = query
-        assert sort in self.VALID_SORT_CRITERIA, "Invalid sort criterion"
-        self.sort = sort.lower()
 
-    def search(self, max_results: int = 20) -> List[Dict[str, str]]:
+    def search(
+        self,
+        query: str,
+        sort: Literal["relevance", "citationCount", "publicationDate"] = "relevance",
+        query_domains: List[str]=None,
+        max_results: int = 20,
+    ) -> List[Dict[str, str]]:
         """
         Perform the search on Semantic Scholar and return results.
 
+        :param query: Search query string
+        :param sort: Sort criterion ('relevance', 'citationCount', 'publicationDate')
+        :param query_domains: List of domains to filter by
         :param max_results: Maximum number of results to retrieve
         :return: List of dictionaries containing title, href, and body of each paper
         """
+        assert sort in self.VALID_SORT_CRITERIA, "Invalid sort criterion"
+        self.sort = sort.lower()
         params = {
-            "query": self.query,
+            "query": query,
             "limit": max_results,
             "fields": "title,abstract,url,venue,year,authors,isOpenAccess,openAccessPdf",
             "sort": self.sort,

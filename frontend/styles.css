@@ -509,3 +509,23 @@ html {
     border-color: #b3d7ff;
   }
   
+  /* Status message colors */
+  .status-error {
+    color: #ff5252 !important;
+    background-color: rgba(255, 82, 82, 0.1) !important;
+    border-color: rgba(255, 82, 82, 0.2) !important;
+  }
+  
+  .status-success {
+    color: #4caf50 !important;
+    background-color: rgba(76, 175, 80, 0.1) !important;
+    border-color: rgba(76, 175, 80, 0.2) !important;
+  }
+  
+  .status-info {
+    color: #2196f3 !important;
+    background-color: rgba(33, 150, 243, 0.1) !important;
+    border-color: rgba(33, 150, 243, 0.2) !important;
+  }
+  
+  

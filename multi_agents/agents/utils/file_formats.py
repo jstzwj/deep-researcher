@@ -85,6 +85,7 @@ async def write_md_to_word(text: str, path: str) -> str:
         html = mistune.html(text)
         # Create a document object
         doc = Document()
+
         # Convert the html generated from the report to document format
         HtmlToDocx().add_html_to_document(html, doc)
 

@@ -114,7 +114,7 @@ async def construct_subtopics(task: str, data: str, config: "Config", subtopics:
 
         kwargs = {
             'model': smart_model.model,
-            **(config.llm_kwargs or {})
+            **(smart_model.llm_kwargs or {})
         }
 
         if smart_model.model in SUPPORT_REASONING_EFFORT_MODELS:
@@ -123,7 +123,7 @@ async def construct_subtopics(task: str, data: str, config: "Config", subtopics:
             kwargs['temperature'] = config.temperature
             kwargs['max_tokens'] = config.smart_token_limit
 
-        provider = get_llm(smart_model.llm_provider, base_url=smart_model.base_url, api_key=smart_model.api_key, **kwargs)
+        provider = get_llm(smart_model.provider, base_url=smart_model.base_url, api_key=smart_model.api_key, **kwargs)
 
         model = provider.llm
 

@@ -6,6 +6,7 @@ from .memory import Memory
 from .utils.enum import ReportSource, ReportType, Tone
 from .llm_provider import GenericLLMProvider
 from .vector_store import VectorStoreWrapper
+from .config import DefaultConfig
 
 # Research skills
 from .skills.researcher import ResearchConductor
@@ -61,7 +62,7 @@ class GPTResearcher:
             with open(config_path, 'r', encoding='utf-8') as f:
                 config = json.load(f)
         else:
-            config = DEFAULT_CONFIG
+            config = DefaultConfig
         self.cfg: Config = Config.model_validate(config)
         self.llm = GenericLLMProvider(self.cfg)
         self.report_source = report_source if report_source else getattr(self.cfg, 'report_source', None)

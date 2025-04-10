@@ -95,7 +95,7 @@ class WebSocketManager:
         if "CONFIG_PATH" in os.environ:
             config_path = os.environ["CONFIG_PATH"]
         else:
-            config_path = "default"
+            config_path = "config.json"
         report = await run_agent(
             task,
             report_type,
@@ -172,7 +172,7 @@ async def run_agent(
         )
         report = await researcher.run()
 
-    elif report_type == ReportType.BasicReport.value:
+    elif report_type == ReportType.BasicReport.value or report_type == ReportType.ResearchReport.value:
         researcher = BasicReport(
             query=task,
             query_domains=query_domains,

@@ -1,3 +1,4 @@
+from typing import List
 import asyncio
 from colorama import Fore, init
 
@@ -26,7 +27,7 @@ class Scraper:
     Scraper class to extract the content from the links
     """
 
-    def __init__(self, urls, user_agent, scraper, worker_pool: WorkerPool):
+    def __init__(self, urls: List[str], user_agent: str, scraper, worker_pool: WorkerPool):
         """
         Initialize the Scraper class.
         Args:
@@ -87,7 +88,7 @@ class Scraper:
                     f"`pip install -U {pkg_inst_name}`"
                 )
 
-    async def extract_data_from_url(self, link, session):
+    async def extract_data_from_url(self, link: str, session):
         """
         Extracts the data from the link with logging
         """

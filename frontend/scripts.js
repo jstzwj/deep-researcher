@@ -114,7 +114,16 @@ const GPTResearcher = (() => {
         addAgentResponse({
           output: "❌ Error starting research: " + error.message,
         })
+        updateState("error")
       }
+    }
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error)
+      addAgentResponse({
+        output: "❌ WebSocket error: Connection failed or was interrupted.",
+      })
+      updateState("error")
     }
 
     // return dispose function
@@ -188,18 +197,26 @@ const GPTResearcher = (() => {
   }
 
   const updateState = (state) => {
-    var status = ""
+    const statusElement = document.getElementById("status")
+    let status = ""
+
+    // Remove all existing status classes
+    statusElement.classList.remove("status-error", "status-success", "status-info", "alert-info")
+
     switch (state) {
       case "in_progress":
         status = "Research in progress..."
+        statusElement.classList.add("status-info")
         setReportActionsStatus("disabled")
         break
       case "finished":
         status = "Research finished!"
+        statusElement.classList.add("status-success")
         setReportActionsStatus("enabled")
         break
       case "error":
         status = "Research failed!"
+        statusElement.classList.add("status-error")
         setReportActionsStatus("disabled")
         break
       case "initial":
@@ -207,13 +224,16 @@ const GPTResearcher = (() => {
         setReportActionsStatus("hidden")
         break
       default:
+        statusElement.classList.add("status-info")
         setReportActionsStatus("disabled")
     }
-    document.getElementById("status").innerHTML = status
-    if (document.getElementById("status").innerHTML == "") {
-      document.getElementById("status").style.display = "none"
+
+    statusElement.innerHTML = status
+
+    if (status === "") {
+      statusElement.style.display = "none"
     } else {
-      document.getElementById("status").style.display = "block"
+      statusElement.style.display = "block"
     }
   }
 

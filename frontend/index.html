@@ -56,7 +56,7 @@
                 <label for="report_type" class="agent-question">What type of report would you like me to
                     generate?</label>
                 <select name="report_type" class="form-control" required>
-                    <option value="research_report">Summary - Short and fast (~2 min)</option>
+                    <option value="basic_report">Summary - Short and fast (~2 min)</option>
                     <option value="detailed_report">Detailed - In depth and longer (~5 min)</option>
                     <option value="resource_report">Resource Report</option>
                 </select>
@@ -67,6 +67,7 @@
                 <select name="tone" id="tone" class="form-control" required>
                     <option value="Objective">Objective - Impartial and unbiased presentation of facts and findings
                     </option>
+                    
                     <option value="Formal">Formal - Adheres to academic standards with sophisticated language and
                         structure</option>
                     <option value="Analytical">Analytical - Critical evaluation and detailed examination of data and
@@ -166,7 +167,7 @@
             <h2>Research Report</h2>
             <div id="reportContainer"></div>
             <div id="reportActions">
-                <div class="alert alert-info" role="alert" id="status"></div>
+                <div class="alert" role="alert" id="status"></div>
                 <a id="copyToClipboard" onclick="GPTResearcher.copyToClipboard()" class="btn btn-secondary mt-3" style="margin-right: 10px;">Copy to clipboard (markdown)</a>
                 <a id="downloadLinkMd" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;" target="_blank" rel="noopener noreferrer">Download as Markdown</a>
                 <a id="downloadLink" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;" target="_blank" rel="noopener noreferrer">Download as PDF</a>
