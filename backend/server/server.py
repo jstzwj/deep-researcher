@@ -103,11 +103,33 @@ def startup_event():
     os.makedirs("outputs", exist_ok=True)
     app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
     # os.makedirs(DOC_PATH, exist_ok=True)  # Commented out to avoid creating the folder if not needed
-    
 
 # Routes
+@app.get("/login.html")
+async def read_root(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request, "report": None})
 
+@app.get("/register.html")
+async def read_root(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request, "report": None})
 
+@app.get("/history.html")
+async def read_root(request: Request):
+    return templates.TemplateResponse("history.html", {"request": request, "report": None})
+
+@app.get("/about.html")
+async def read_root(request: Request):
+    return templates.TemplateResponse("about.html", {"request": request, "report": None})
+
+@app.get("/profile.html")
+async def read_root(request: Request):
+    return templates.TemplateResponse("profile.html", {"request": request, "report": None})
+
+@app.get("/research.html")
+async def read_root(request: Request):
+    return templates.TemplateResponse("research.html", {"request": request, "report": None})
+
+@app.get("/index.html")
 @app.get("/")
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "report": None})
@@ -197,7 +219,7 @@ async def delete_file(filename: str):
     return await handle_file_deletion(filename, DOC_PATH)
 
 
-@app.websocket("/ws")
+@app.websocket("/research.html/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:

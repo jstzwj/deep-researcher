@@ -1,0 +1,1111 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  color: #fff;
+  line-height: 1.6;
+  background-color: #1e272e;
+  margin: 0; /* Remove default margin */
+  padding-top: 60px; /* Add padding for the title bar */
+}
+
+/* Title bar styles */
+.title-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.title-bar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-bar-logo img {
+  height: 36px;
+  width: auto;
+  border-radius: 50%;
+}
+
+.title-bar-logo h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+.title-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.landing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.landing h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.landing p {
+  font-size: 1.5rem;
+  font-weight: 400;
+  max-width: 1000px;
+  padding: 0 25px 0 25px;
+  margin: auto auto 2rem auto;
+}
+
+.container {
+  padding: 40px; /* Increased padding for the form */
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  margin: 70px auto 180px auto; /* Adjusted top margin to account for title bar */
+  max-width: 1200px; /* Added max-width for better layout on large screens */
+}
+
+/* Removed hover effect that caused animation */
+.container:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+input,
+select,
+#output,
+#reportContainer {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff; /* Ensure text is white */
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Ensure dropdown options are visible */
+select option {
+  background-color: #2d3748; /* Dark background for dropdown options */
+  color: white; /* White text for contrast */
+  padding: 8px;
+}
+
+/* Fix for Firefox which doesn't always honor the option styling */
+select {
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Add a custom arrow for select elements */
+select {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px; /* Make room for the arrow */
+}
+
+input:hover,
+input:focus,
+select:hover,
+select:focus {
+  color: #ccc;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  background: #007bff; /* Removed gradient */
+  border: none;
+  padding: 10px 20px; /* Added padding */
+}
+
+.btn-secondary {
+  background: #6c757d; /* Removed gradient */
+  border: none;
+  padding: 10px 20px; /* Added padding */
+}
+
+.btn:hover {
+  opacity: 0.9;
+  /* Removed transform scale effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.agent-question {
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+footer p {
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.margin-div {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  padding: 25px;
+}
+
+.images_div {
+  padding: 0 25px 0 25px;
+}
+
+.agent_response {
+  background-color: #747d8c;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.agent_response.error {
+  background-color: rgba(255, 82, 82, 0.3);
+  border-left: 4px solid #ff5252;
+}
+
+.agent_response.success {
+  background-color: rgba(76, 175, 80, 0.3);
+  border-left: 4px solid #4caf50;
+}
+
+.agent_response.warning {
+  background-color: rgba(255, 193, 7, 0.3);
+  border-left: 4px solid #ffc107;
+}
+
+.agent_response.info {
+  background-color: rgba(33, 150, 243, 0.3);
+  border-left: 4px solid #2196f3;
+}
+
+#output {
+  height: 300px;
+  overflow: auto;
+  padding: 15px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  border-radius: 12px;
+}
+
+/* 在 #reportContainer 样式中添加自动换行的属性 */
+#reportContainer {
+  font-family: "Georgia", "Times New Roman", Times, "Courier New", serif;
+  font-size: 18px !important;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* 确保 reportContainer 内的所有文本元素都能自动换行 */
+#reportContainer p,
+#reportContainer td,
+#reportContainer th,
+#reportContainer code {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* 为列表项单独设置样式 */
+#reportContainer li {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  margin-bottom: 0.5em;
+}
+
+/* 确保列表本身的样式 */
+#reportContainer ul,
+#reportContainer ol {
+  padding-left: 2em;
+  margin: 1em 0;
+}
+
+/* 确保代码块内的长行也能自动换行 */
+#reportContainer pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 确保表格不会溢出容器 */
+#reportContainer table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* 确保链接文本也能自动换行 */
+#reportContainer a {
+  word-break: break-all;
+}
+
+/* 确保 TeXMe 渲染的主容器也应用这些样式 */
+#reportContainer main {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* TeXMe specific styles */
+.texme-report {
+  color: #fff !important;
+}
+
+/* Style for the TeXMe rendered content */
+#reportContainer main {
+  color: #fff !important;
+  background-color: transparent !important;
+  font-family: "Georgia", "Times New Roman", Times, "Courier New", serif;
+  font-size: 18px !important;
+}
+
+/* Style for headings in TeXMe rendered content */
+#reportContainer h1,
+#reportContainer h2,
+#reportContainer h3,
+#reportContainer h4,
+#reportContainer h5,
+#reportContainer h6 {
+  color: #fff !important;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Style for links in TeXMe rendered content */
+#reportContainer a {
+  color: #4fc3f7 !important;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+#reportContainer a:hover {
+  text-decoration: underline;
+}
+
+/* Style for images in TeXMe rendered content */
+#reportContainer img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1em 0;
+}
+
+/* Style for code blocks in TeXMe rendered content */
+#reportContainer pre,
+#reportContainer code {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  color: #f8f8f2 !important;
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  font-family: "Courier New", monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#reportContainer pre {
+  padding: 1em;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+/* Style for blockquotes in TeXMe rendered content */
+#reportContainer blockquote {
+  border-left: 4px solid #4fc3f7;
+  padding-left: 1em;
+  margin-left: 0;
+  color: #ccc;
+}
+
+/* Style for tables in TeXMe rendered content */
+#reportContainer table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  table-layout: fixed;
+}
+
+#reportContainer th,
+#reportContainer td {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.5em;
+  text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+#reportContainer th {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* MathJax specific styles */
+.MathJax {
+  color: #fff !important;
+}
+
+.tags-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.tag {
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+}
+
+.tag .remove-tag {
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.tag-input {
+  border: none;
+  outline: none;
+  flex-grow: 1;
+}
+
+footer a {
+  color: #14b8a6;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #0d9488;
+}
+
+/* Add or modify these styles at the end of the file */
+#selectedImagesContainer {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+#selectedImagesContainer h3 {
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+#selectedImagesContainer img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+#selectedImagesContainer img:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.image-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.image-dialog img {
+  max-width: 90%;
+  max-height: 80%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.image-dialog button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.image-dialog button:hover {
+  background-color: #0056b3;
+}
+
+/* Language selector styles */
+.language-selector {
+  display: flex;
+  align-items: center;
+}
+
+.language-btn {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.language-btn:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.language-btn:after {
+  content: "▼";
+  font-size: 10px;
+  margin-left: 5px;
+}
+
+.language-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  background-color: #2d3748;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  display: none;
+  width: 150px;
+}
+
+.language-dropdown.show {
+  display: block;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.language-option {
+  padding: 10px 16px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.language-option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.language-option.active {
+  background-color: rgba(0, 123, 255, 0.5);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 2px 12px;
+  margin-top: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .title-bar {
+    padding: 0 10px;
+  }
+
+  .title-bar-logo h1 {
+    font-size: 1.2rem;
+  }
+
+  .container {
+    padding: 20px;
+    margin-top: 70px;
+  }
+
+  .agent-question {
+    font-size: 1.2rem;
+  }
+}
+
+/* Add these styles to the existing CSS file */
+
+/* Textarea styling */
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Output language options styling */
+.output-language-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* Custom radio button styling */
+.custom-control {
+  padding-left: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.custom-control-input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.custom-control-label {
+  position: relative;
+  margin-bottom: 0;
+  vertical-align: top;
+  cursor: pointer;
+  color: #fff;
+}
+
+.custom-control-label::before {
+  position: absolute;
+  top: 0.25rem;
+  left: -1.5rem;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  pointer-events: none;
+  content: "";
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Radio button specific styling */
+.custom-radio .custom-control-label::before {
+  border-radius: 50%;
+}
+
+.custom-control-label::after {
+  position: absolute;
+  top: 0.25rem;
+  left: -1.5rem;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  content: "";
+  background: no-repeat 50% / 50% 50%;
+}
+
+.custom-radio .custom-control-input:checked ~ .custom-control-label::before {
+  color: #fff;
+  border-color: #007bff;
+  background-color: #007bff;
+}
+
+.custom-radio .custom-control-input:checked ~ .custom-control-label::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.custom-control-input:not(:disabled):active ~ .custom-control-label::before {
+  color: #fff;
+  background-color: #b3d7ff;
+  border-color: #b3d7ff;
+}
+
+/* Status message colors */
+.status-error {
+  color: #ff5252 !important;
+  background-color: rgba(255, 82, 82, 0.1) !important;
+  border-color: rgba(255, 82, 82, 0.2) !important;
+}
+
+.status-success {
+  color: #4caf50 !important;
+  background-color: rgba(76, 175, 80, 0.1) !important;
+  border-color: rgba(76, 175, 80, 0.2) !important;
+}
+
+.status-info {
+  color: #2196f3 !important;
+  background-color: rgba(33, 150, 243, 0.1) !important;
+  border-color: rgba(33, 150, 243, 0.2) !important;
+}
+
+/* 在现有 CSS 文件末尾添加以下样式 */
+
+/* Navigation styles */
+.title-bar-nav {
+  display: flex;
+  align-items: center;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin: 0 15px;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: #4fc3f7;
+  text-decoration: none;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.auth-link {
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s;
+}
+
+.auth-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Auth form styles */
+.auth-form {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.login-container,
+.register-container {
+  padding-top: 50px;
+}
+
+.login-title,
+.register-title {
+  color: white;
+  font-weight: 600;
+}
+
+.forgot-password {
+  color: #4fc3f7;
+  font-size: 14px;
+}
+
+.forgot-password:hover {
+  color: #81d4fa;
+}
+
+/* About page styles */
+.about-container {
+  padding-top: 30px;
+}
+
+.about-section,
+.history-section {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+.about-title,
+.features-title,
+.history-title {
+  color: white;
+  font-weight: 600;
+}
+
+.about-description {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.features-list {
+  padding-left: 20px;
+}
+
+.feature-item {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* History page styles */
+.history-container {
+  padding-top: 30px;
+}
+
+.filters {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.table {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.table td,
+.table th {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Modal styles */
+.modal-content.bg-dark {
+  background-color: #1e272e !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 在CSS文件末尾添加首页样式 */
+
+/* Hero section styles */
+.hero-section {
+  height: 100vh;
+  min-height: 600px;
+  background: linear-gradient(135deg, #1e272e 0%, #2d3436 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("/static/hero-bg.jpg") center center;
+  background-size: cover;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.hero-buttons {
+  margin-top: 2rem;
+}
+
+.btn-outline-light {
+  color: white;
+  border-color: white;
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* Home container styles */
+.home-container {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+/* Features section styles */
+.features-section {
+  margin-bottom: 5rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.feature-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 30px;
+  height: 100%;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.feature-icon img {
+  width: 40px;
+  height: 40px;
+}
+
+.feature-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+  color: white;
+}
+
+.feature-description {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* How it works section styles */
+.how-it-works-section {
+  margin-bottom: 5rem;
+  padding: 3rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.steps-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.step {
+  display: flex;
+  margin-bottom: 2rem;
+  align-items: flex-start;
+}
+
+.step:last-child {
+  margin-bottom: 0;
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+.step-content {
+  flex-grow: 1;
+}
+
+.step-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.step-description {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Use cases section styles */
+.use-cases-section {
+  margin-bottom: 5rem;
+}
+
+.use-case-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 30px;
+  height: 100%;
+}
+
+.use-case-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.use-case-description {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* CTA section styles */
+.cta-section {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.cta-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cta-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.cta-description {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cta-buttons {
+  margin-top: 2rem;
+}
+
+/* Responsive adjustments for home page */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 3rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .cta-title {
+    font-size: 2rem;
+  }
+
+  .feature-card,
+  .use-case-card {
+    margin-bottom: 20px;
+  }
+
+  .how-it-works-section {
+    padding: 2rem 1rem;
+  }
+}

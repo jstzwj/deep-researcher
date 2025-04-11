@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Research History - GPT Researcher</title>
+    <meta name="description" content="View your GPT Researcher history">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="./static/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/styles.css" />
+</head>
+
+<body>
+    <main class="container history-container">
+        <h1 class="history-title text-center mb-4">Research History</h1>
+        
+        <div class="filters mb-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="date-filter">Filter by Date</label>
+                        <select id="date-filter" class="form-control">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="type-filter">Filter by Type</label>
+                        <select id="type-filter" class="form-control">
+                            <option value="all">All Types</option>
+                            <option value="summary">Summary</option>
+                            <option value="detailed">Detailed</option>
+                            <option value="resource">Resource Report</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="search-filter">Search</label>
+                        <input type="text" id="search-filter" class="form-control" placeholder="Search queries...">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="history-container">
+            <!-- History items will be loaded here -->
+        </div>
+        
+        <!-- Report Modal -->
+        <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reportModalLabel">Research Report</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="reportModalBody">
+                        <!-- Report content will be loaded here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="downloadReportBtn">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Deep Researcher &copy; 2025</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/site/scripts/i18n.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            // Load research history
+            const historyContainer = document.getElementById('history-container');
+            
+            if (!isLoggedIn) {
+                historyContainer.innerHTML = `
+                    <div class="alert alert-info">
+                        <p>Please <a href="/login.html">login</a> to view your research history.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // For demo purposes, create some sample history items
+            const sampleHistory = [
+                {
+                    id: 1,
+                    date: '2025-04-10',
+                    query: 'The impact of artificial intelligence on healthcare',
+                    reportType: 'Detailed',
+                    reportContent: '# The Impact of Artificial Intelligence on Healthcare\n\n## Introduction\nArtificial Intelligence (AI) is revolutionizing healthcare in numerous ways, from improving diagnostic accuracy to streamlining administrative tasks.\n\n## Key Applications\n- **Medical Imaging**: AI algorithms can detect patterns in X-rays, MRIs, and CT scans with remarkable accuracy.\n- **Drug Discovery**: AI accelerates the identification of potential therapeutic compounds.\n- **Personalized Medicine**: AI helps tailor treatments to individual genetic profiles.\n\n## Challenges\n- Regulatory hurdles\n- Data privacy concerns\n- Integration with existing systems\n\n## Future Outlook\nThe future of AI in healthcare looks promising, with potential for significant improvements in patient outcomes and healthcare efficiency.'
+                },
+                {
+                    id: 2,
+                    date: '2025-04-08',
+                    query: 'Sustainable energy solutions for developing countries',
+                    reportType: 'Summary',
+                    reportContent: '# Sustainable Energy Solutions for Developing Countries\n\nDeveloping countries face unique challenges in implementing sustainable energy solutions, including limited infrastructure and financial constraints. However, renewable energy technologies like solar, wind, and micro-hydro offer promising alternatives to traditional fossil fuels.\n\nKey advantages include:\n- Lower long-term costs\n- Energy independence\n- Reduced environmental impact\n- Scalability for remote communities\n\nSuccessful implementation requires policy support, international cooperation, and innovative financing mechanisms.'
+                },
+                {
+                    id: 3,
+                    date: '2025-04-05',
+                    query: 'Advancements in quantum computing',
+                    reportType: 'Resource Report',
+                    reportContent: '# Advancements in Quantum Computing: Resource Report\n\n## Key Research Papers\n1. "Quantum Supremacy Using a Programmable Superconducting Processor" - Google AI Quantum (2023)\n2. "A Blueprint for Practical Quantum Advantage" - IBM Research (2024)\n3. "Quantum Error Correction in Silicon Qubits" - Princeton University (2025)\n\n## Leading Organizations\n- IBM Quantum\n- Google Quantum AI\n- Microsoft Quantum\n- QuTech (Netherlands)\n\n## Online Resources\n- Quantum Computing Report (https://quantumcomputingreport.com)\n- Qiskit Learning Resources (https://qiskit.org/learn)\n- Quantum Open Source Foundation (https://qosf.org)'
+                },
+                {
+                    id: 4,
+                    date: '2025-04-01',
+                    query: 'Climate change mitigation strategies',
+                    reportType: 'Detailed',
+                    reportContent: '# Climate Change Mitigation Strategies\n\n## Introduction\nClimate change represents one of the most significant challenges facing humanity today. This report examines various mitigation strategies across different sectors.\n\n## Energy Sector\n- Transition to renewable energy sources\n- Improve energy efficiency\n- Carbon capture and storage technologies\n\n## Transportation\n- Electric vehicles\n- Public transportation improvements\n- Sustainable aviation fuels\n\n## Agriculture and Land Use\n- Sustainable farming practices\n- Reforestation and afforestation\n- Soil carbon sequestration\n\n## Policy Approaches\n- Carbon pricing mechanisms\n- Regulatory frameworks\n- International cooperation agreements\n\n## Conclusion\nEffective climate change mitigation requires a multifaceted approach combining technological innovation, policy reform, and behavioral changes.'
+                },
+                {
+                    id: 5,
+                    date: '2025-03-28',
+                    query: 'Advances in natural language processing',
+                    reportType: 'Summary',
+                    reportContent: '# Advances in Natural Language Processing\n\nNatural Language Processing (NLP) has seen remarkable progress in recent years, driven by transformer architectures and large language models. Key developments include improved language understanding, more natural text generation, and enhanced multilingual capabilities.\n\nRecent breakthroughs have enabled applications such as:\n- More accurate machine translation\n- Sophisticated conversational agents\n- Automated content creation\n- Advanced sentiment analysis\n\nChallenges remain in areas of bias mitigation, factual accuracy, and computational efficiency.'
+                }
+            ];
+            
+            function renderHistory(historyData) {
+                if (historyData.length === 0) {
+                    historyContainer.innerHTML = `
+                        <div class="alert alert-info">
+                            No research history found. Start your first research!
+                        </div>
+                    `;
+                } else {
+                    let historyHTML = `
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Query</th>
+                                        <th>Report Type</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    historyData.forEach(item => {
+                        historyHTML += `
+                            <tr>
+                                <td>${item.date}</td>
+                                <td>${item.query}</td>
+                                <td>${item.reportType}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary view-report-btn" data-id="${item.id}">View Report</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    historyHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    
+                    historyContainer.innerHTML = historyHTML;
+                    
+                    // Add event listeners to view report buttons
+                    document.querySelectorAll('.view-report-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const reportId = this.getAttribute('data-id');
+                            const report = sampleHistory.find(item => item.id == reportId);
+                            
+                            if (report) {
+                                // Convert markdown to HTML (simple version)
+                                const converter = new showdown.Converter();
+                                const html = converter.makeHtml(report.reportContent);
+                                
+                                // Update modal content
+                                document.getElementById('reportModalLabel').textContent = report.query;
+                                document.getElementById('reportModalBody').innerHTML = html;
+                                
+                                // Show modal
+                                $('#reportModal').modal('show');
+                            }
+                        });
+                    });
+                }
+            }
+            
+            // Initial render
+            renderHistory(sampleHistory);
+            
+            // Filter functionality
+            function applyFilters() {
+                const dateFilter = document.getElementById('date-filter').value;
+                const typeFilter = document.getElementById('type-filter').value;
+                const searchFilter = document.getElementById('search-filter').value.toLowerCase();
+                
+                let filteredHistory = [...sampleHistory];
+                
+                // Apply date filter
+                if (dateFilter !== 'all') {
+                    const today = new Date();
+                    const filterDate = new Date();
+                    
+                    switch(dateFilter) {
+                        case 'today':
+                            // No adjustment needed for today
+                            break;
+                        case 'week':
+                            filterDate.setDate(today.getDate() - 7);
+                            break;
+                        case 'month':
+                            filterDate.setMonth(today.getMonth() - 1);
+                            break;
+                        case 'year':
+                            filterDate.setFullYear(today.getFullYear() - 1);
+                            break;
+                    }
+                    
+                    filteredHistory = filteredHistory.filter(item => {
+                        const itemDate = new Date(item.date);
+                        return itemDate >= filterDate;
+                    });
+                }
+                
+                // Apply type filter
+                if (typeFilter !== 'all') {
+                    filteredHistory = filteredHistory.filter(item => 
+                        item.reportType.toLowerCase() === typeFilter.toLowerCase()
+                    );
+                }
+                
+                // Apply search filter
+                if (searchFilter) {
+                    filteredHistory = filteredHistory.filter(item => 
+                        item.query.toLowerCase().includes(searchFilter)
+                    );
+                }
+                
+                renderHistory(filteredHistory);
+            }
+            
+            // Add event listeners to filters
+            document.getElementById('date-filter').addEventListener('change', applyFilters);
+            document.getElementById('type-filter').addEventListener('change', applyFilters);
+            document.getElementById('search-filter').addEventListener('input', applyFilters);
+            
+            // Download report functionality
+            document.getElementById('downloadReportBtn').addEventListener('click', function() {
+                const reportTitle = document.getElementById('reportModalLabel').textContent;
+                const reportContent = document.getElementById('reportModalBody').innerHTML;
+                
+                // Create a blob with the HTML content
+                const blob = new Blob([`<html><head><title>${reportTitle}</title></head><body>${reportContent}</body></html>`], {type: 'text/html'});
+                const url = URL.createObjectURL(blob);
+                
+                // Create a temporary link and trigger download
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${reportTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_report.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+</body>
+
+</html>

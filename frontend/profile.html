@@ -1,0 +1,278 @@
+<html lang="en">
+
+<head>
+    <title>User Profile - GPT Researcher</title>
+    <meta name="description" content="Manage your GPT Researcher profile">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="./static/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/profile.css" />
+    <link rel="stylesheet" href="/site/styles/styles.css" />
+</head>
+
+<body>
+    <main class="container profile-container">
+        <h1 class="profile-title text-center mb-4" data-i18n="profile.title">User Profile</h1>
+        
+        <div class="profile-section">
+            <h2 class="personal-info-title" data-i18n="profile.personalInfo">Personal Information</h2>
+            <div class="row profile-info-row">
+                <div class="col-md-3">
+                    <span class="profile-label join-date-label" data-i18n="profile.name">Name</span>
+                </div>
+                <div class="col-md-9">
+                    <span class="profile-value" id="profile-name-value">Loading...</span>
+                </div>
+            </div>
+            <div class="row profile-info-row">
+                <div class="col-md-3">
+                    <span class="profile-label" data-i18n="profile.email">Email</span>
+                </div>
+                <div class="col-md-9">
+                    <span class="profile-value" id="profile-email-value">Loading...</span>
+                </div>
+            </div>
+            <div class="row profile-info-row">
+                <div class="col-md-3">
+                    <span class="profile-label join-date-label" data-i18n="profile.joinDate">Join Date</span>
+                </div>
+                <div class="col-md-9">
+                    <span class="profile-value" id="join-date-value">April 10, 2025</span>
+                </div>
+            </div>
+            <form class="profile-form mt-4">
+                <div class="form-group">
+                    <label for="profile-name" data-i18n="profile.name">Name</label>
+                    <input type="text" id="profile-name" class="form-control" value="">
+                </div>
+                <div class="form-group">
+                    <label for="profile-email" data-i18n="profile.email">Email</label>
+                    <input type="email" id="profile-email" class="form-control" value="" readonly>
+                </div>
+                <button type="submit" class="btn btn-primary update-profile-btn" data-i18n="profile.updateProfile">Update Profile</button>
+            </form>
+        </div>
+        
+        <div class="profile-section">
+            <h2 class="change-password-title" data-i18n="profile.changePassword">Change Password</h2>
+            <form class="profile-form">
+                <div class="form-group">
+                    <label for="current-password" data-i18n="profile.currentPassword">Current Password</label>
+                    <input type="password" id="current-password" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="new-password" data-i18n="profile.newPassword">New Password</label>
+                    <input type="password" id="new-password" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-new-password" data-i18n="profile.confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirm-new-password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary update-password-btn" data-i18n="profile.updatePassword">Update Password</button>
+            </form>
+        </div>
+        
+        <div class="profile-section">
+            <h2 class="preferences-title" data-i18n="profile.preferences">Preferences</h2>
+            <form class="profile-form">
+                <div class="form-group">
+                    <label for="default-language" data-i18n="profile.defaultLanguage">Default Report Language</label>
+                    <select id="default-language" class="form-control">
+                        <option value="en">English</option>
+                        <option value="zh-CN">简体中文 (Simplified Chinese)</option>
+                        <option value="zh-TW">繁體中文 (Traditional Chinese)</option>
+                        <option value="ja">日本語 (Japanese)</option>
+                        <option value="ko">한국어 (Korean)</option>
+                        <option value="es">Español (Spanish)</option>
+                        <option value="fr">Français (French)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="default-report-type" data-i18n="profile.defaultReportType">Default Report Type</label>
+                    <select id="default-report-type" class="form-control">
+                        <option value="summary">Summary - Short and fast</option>
+                        <option value="detailed">Detailed - In depth and longer</option>
+                        <option value="resource">Resource Report</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary save-preferences-btn" data-i18n="profile.savePreferences">Save Preferences</button>
+            </form>
+        </div>
+        
+        <div class="profile-section">
+            <h2 class="research-stats-title" data-i18n="profile.researchStats">Research Statistics</h2>
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label total-researches-label" data-i18n="profile.totalResearches">Total Researches</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3.5m</div>
+                    <div class="stat-label avg-research-time-label" data-i18n="profile.avgResearchTime">Average Research Time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">85%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h3 class="favorite-topics-label" data-i18n="profile.favoriteTopics">Favorite Topics</h3>
+                <div class="favorite-topics-list">
+                    <span class="topic-tag">AI</span>
+                    <span class="topic-tag">Machine Learning</span>
+                    <span class="topic-tag">Climate Change</span>
+                    <span class="topic-tag">Quantum Computing</span>
+                    <span class="topic-tag">Renewable Energy</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-section">
+            <h2 class="recent-activity-title" data-i18n="profile.recentActivity">Recent Activity</h2>
+            <ul class="activity-list">
+                <li class="activity-item">
+                    <div class="activity-date">April 10, 2025</div>
+                    <div class="activity-description">Researched "The impact of artificial intelligence on healthcare"</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-date">April 8, 2025</div>
+                    <div class="activity-description">Researched "Sustainable energy solutions for developing countries"</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-date">April 5, 2025</div>
+                    <div class="activity-description">Researched "Advancements in quantum computing"</div>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="profile-section">
+            <h2 class="delete-account-title" data-i18n="profile.deleteAccount">Delete Account</h2>
+            <p class="delete-warning" data-i18n="profile.deleteWarning">Warning: This action cannot be undone. All your data will be permanently deleted.</p>
+            <button class="btn btn-danger delete-confirm-btn" data-i18n="profile.deleteConfirm">I understand, delete my account</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>Deep Researcher &copy; 2025</p>
+    </footer>
+
+    <script src="/site/scripts/i18n.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (!isLoggedIn) {
+                // Redirect to login page if not logged in
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            // Load user data
+            const userName = localStorage.getItem('userName') || 'User';
+            const userEmail = localStorage.getItem('userEmail') || 'user@example.com';
+            
+            // Update profile display
+            document.getElementById('profile-name-value').textContent = userName;
+            document.getElementById('profile-email-value').textContent = userEmail;
+            
+            // Update form fields
+            document.getElementById('profile-name').value = userName;
+            document.getElementById('profile-email').value = userEmail;
+            
+            // Handle profile update form
+            document.querySelector('.update-profile-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const newName = document.getElementById('profile-name').value;
+                
+                // Update localStorage
+                localStorage.setItem('userName', newName);
+                
+                // Update display
+                document.getElementById('profile-name-value').textContent = newName;
+                
+                // Show success message
+                alert('Profile updated successfully!');
+            });
+            
+            // Handle password change form
+            document.querySelector('.update-password-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmNewPassword = document.getElementById('confirm-new-password').value;
+                
+                // Simple validation
+                if (!currentPassword || !newPassword || !confirmNewPassword) {
+                    alert('Please fill in all password fields.');
+                    return;
+                }
+                
+                if (newPassword !== confirmNewPassword) {
+                    alert('New passwords do not match.');
+                    return;
+                }
+                
+                // In a real app, you would verify the current password and update it on the server
+                // For this demo, just show a success message
+                alert('Password updated successfully!');
+                
+                // Clear form
+                document.getElementById('current-password').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('confirm-new-password').value = '';
+            });
+            
+            // Handle preferences form
+            document.querySelector('.save-preferences-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const defaultLanguage = document.getElementById('default-language').value;
+                const defaultReportType = document.getElementById('default-report-type').value;
+                
+                // Save preferences to localStorage
+                localStorage.setItem('defaultLanguage', defaultLanguage);
+                localStorage.setItem('defaultReportType', defaultReportType);
+                
+                // Show success message
+                alert('Preferences saved successfully!');
+            });
+            
+            // Handle account deletion
+            document.querySelector('.delete-confirm-btn').addEventListener('click', function() {
+                const confirmDelete = confirm('Are you sure you want to delete your account? This action cannot be undone.');
+                
+                if (confirmDelete) {
+                    // In a real app, you would send a request to the server to delete the account
+                    // For this demo, just clear localStorage and redirect to home
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userName');
+                    localStorage.removeItem('userEmail');
+                    
+                    // Redirect to home page
+                    window.location.href = '/index.html';
+                }
+            });
+            
+            // Load saved preferences if they exist
+            const savedLanguage = localStorage.getItem('defaultLanguage');
+            const savedReportType = localStorage.getItem('defaultReportType');
+            
+            if (savedLanguage) {
+                document.getElementById('default-language').value = savedLanguage;
+            }
+            
+            if (savedReportType) {
+                document.getElementById('default-report-type').value = savedReportType;
+            }
+        });
+    </script>
+</body>
+
+</html>
