@@ -1,5 +1,7 @@
-from typing import Any, Optional
+from typing import Any, Optional, Dict, List, Union, Callable
 import json
+from langchain_core.documents import Document
+from langchain_core.vectorstores import VectorStore
 
 from .config import Config
 from .memory import Memory
@@ -14,7 +16,7 @@ from .skills.writer import ReportGenerator
 from .skills.context_manager import ContextManager
 from .skills.browser import BrowserManager
 from .skills.curator import SourceCurator
-from .skills.deep_research import DeepResearchSkill
+from .skills.deep_research import DeepResearchSkill, ResearchProgress
 
 from .actions import (
     add_references,
@@ -27,6 +29,7 @@ from .actions import (
 )
 
 
+
 class GPTResearcher:
     def __init__(
         self,
@@ -36,22 +39,22 @@ class GPTResearcher:
         report_source: str = ReportSource.Web.value,
         tone: Tone = Tone.Objective,
         output_language: str = "english",
-        source_urls: list[str] | None = None,
-        document_urls: list[str] | None = None,
+        source_urls: List[str] | None = None,
+        document_urls: List[str] | None = None,
         complement_source_urls: bool = False,
-        query_domains: list[str] | None = None,
-        documents=None,
-        vector_store=None,
-        vector_store_filter=None,
-        config_path=None,
+        query_domains: List[str] | None = None,
+        documents: Optional[List[Document]]=None,
+        vector_store: Optional[VectorStore]=None,
+        vector_store_filter: Optional[Dict[str, Any]]=None,
+        config_path: Optional[str]=None,
         websocket=None,
         agent=None,
-        role=None,
+        role: Optional[str]=None,
         parent_query: str = "",
-        subtopics: list | None = None,
+        subtopics: List[str] | None = None,
         visited_urls: set | None = None,
         verbose: bool = True,
-        context=None,
+        context: Optional[Union[str, List[str]]]=None,
         headers: dict | None = None,
         max_subtopics: int = 5,
         log_handler=None,
@@ -123,7 +126,7 @@ class GPTResearcher:
                 import logging
                 logging.getLogger('research').error(f"Error in _log_event: {e}", exc_info=True)
 
-    async def conduct_research(self, on_progress=None):
+    async def conduct_research(self, on_progress: Optional[Callable[[ResearchProgress], None]]=None):
         await self._log_event("research", step="start", details={
             "query": self.query,
             "report_type": self.report_type,
@@ -160,7 +163,7 @@ class GPTResearcher:
         })
         return self.context
 
-    async def _handle_deep_research(self, on_progress=None):
+    async def _handle_deep_research(self, on_progress: Optional[Callable[[ResearchProgress], None]]=None):
         """Handle deep research execution and logging."""
         # Log deep research configuration
         await self._log_event("research", step="deep_research_initialize", details={

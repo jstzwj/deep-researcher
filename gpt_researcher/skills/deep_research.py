@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional, Set
+from typing import List, Dict, Any, Optional, Set, Callable
 import asyncio
 import logging
 import time
@@ -191,7 +191,7 @@ Format each question on a new line starting with 'Question: '"""}
             learnings: List[str] = None,
             citations: Dict[str, str] = None,
             visited_urls: Set[str] = None,
-            on_progress=None
+            on_progress: Optional[Callable[[ResearchProgress], None]]=None
     ) -> Dict[str, Any]:
         """Conduct deep iterative research"""
         if learnings is None:
@@ -338,7 +338,7 @@ Format each question on a new line starting with 'Question: '"""}
             'sources': all_sources
         }
 
-    async def run(self, on_progress=None) -> str:
+    async def run(self, on_progress: Optional[Callable[[ResearchProgress], None]]=None) -> str:
         """Run the deep research process and generate final report"""
         start_time = time.time()
 

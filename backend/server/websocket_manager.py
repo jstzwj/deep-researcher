@@ -133,7 +133,7 @@ async def run_agent(
     source_urls: List[str],
     document_urls: List[str],
     tone: Tone,
-    websocket,
+    websocket: WebSocket,
     stream_output=stream_output,
     headers=None,
     query_domains: List[str] = [],

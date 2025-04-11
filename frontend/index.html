@@ -11,6 +11,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/site/styles.css" />
+    <!-- Configure TeXMe before loading it -->
+    <script>
+        window.texme = {
+            useMathJax: true,
+            protectMath: true,
+            renderOnLoad: false,  // We'll render manually
+            style: 'viewer'         // We'll use our own styles
+        };
+        window.MathJax = {
+            startup: {
+                ready: () => {
+                    console.log('MathJax is loaded, but not yet initialized');
+                    MathJax.startup.defaultReady();
+                    console.log('MathJax is initialized, and the initial typeset is queued');
+                }
+            },
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],  // 行内公式
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],   // 独立行公式
+            },
+            asciimath: {
+                delimiters: [['`', '`']]        // AsciiMath 分隔符
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <!-- <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+    <!-- Add TeXMe library for Markdown rendering with LaTeX support -->
+    <script src="https://cdn.jsdelivr.net/npm/texme@1.2.2"></script>
     <style>
         .avatar {
             width: 80px;
@@ -56,7 +88,7 @@
                 <label for="report_type" class="agent-question">What type of report would you like me to
                     generate?</label>
                 <select name="report_type" class="form-control" required>
-                    <option value="basic_report">Summary - Short and fast (~2 min)</option>
+                    <option value="research_report">Summary - Short and fast (~2 min)</option>
                     <option value="detailed_report">Detailed - In depth and longer (~5 min)</option>
                     <option value="resource_report">Resource Report</option>
                 </select>
@@ -67,7 +99,7 @@
                 <select name="tone" id="tone" class="form-control" required>
                     <option value="Objective">Objective - Impartial and unbiased presentation of facts and findings
                     </option>
-                    
+
                     <option value="Formal">Formal - Adheres to academic standards with sophisticated language and
                         structure</option>
                     <option value="Analytical">Analytical - Critical evaluation and detailed examination of data and
@@ -112,24 +144,28 @@
             </div>
             <div class="form-group">
                 <label for="queryDomains" class="form-label">Query Domains (Optional)</label>
-                <input type="text" class="form-control" id="queryDomains" name="query_domains" placeholder="Enter domains separated by commas">
+                <input type="text" class="form-control" id="queryDomains" name="query_domains"
+                    placeholder="Enter domains separated by commas">
                 <small class="text-muted">Example: techcrunch.com, forbes.com</small>
             </div>
-            
+
             <!-- Changed from checkboxes to radio buttons for output language selection -->
             <div class="form-group">
                 <label class="agent-question">In which language would you like the report to be generated?</label>
                 <div class="output-language-options">
                     <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" id="lang-en" name="output_language" value="en" checked>
+                        <input type="radio" class="custom-control-input" id="lang-en" name="output_language" value="en"
+                            checked>
                         <label class="custom-control-label" for="lang-en">English</label>
                     </div>
                     <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" id="lang-zh-CN" name="output_language" value="zh-CN">
+                        <input type="radio" class="custom-control-input" id="lang-zh-CN" name="output_language"
+                            value="zh-CN">
                         <label class="custom-control-label" for="lang-zh-CN">简体中文 (Simplified Chinese)</label>
                     </div>
                     <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" id="lang-zh-TW" name="output_language" value="zh-TW">
+                        <input type="radio" class="custom-control-input" id="lang-zh-TW" name="output_language"
+                            value="zh-TW">
                         <label class="custom-control-label" for="lang-zh-TW">繁體中文 (Traditional Chinese)</label>
                     </div>
                     <div class="custom-control custom-radio">
@@ -150,7 +186,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <input type="submit" value="Research" class="btn btn-primary button-padding">
         </form>
 
@@ -165,14 +201,23 @@
         </div>
         <div class="margin-div">
             <h2>Research Report</h2>
-            <div id="reportContainer"></div>
+            <!-- This div will contain the textarea for TeXMe -->
+            <div id="reportWrapper">
+                <textarea id="reportContent" style="display: none;"></textarea>
+                <div id="reportContainer" class="texme-report"></div>
+            </div>
             <div id="reportActions">
                 <div class="alert" role="alert" id="status"></div>
-                <a id="copyToClipboard" onclick="GPTResearcher.copyToClipboard()" class="btn btn-secondary mt-3" style="margin-right: 10px;">Copy to clipboard (markdown)</a>
-                <a id="downloadLinkMd" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;" target="_blank" rel="noopener noreferrer">Download as Markdown</a>
-                <a id="downloadLink" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;" target="_blank" rel="noopener noreferrer">Download as PDF</a>
-                <a id="downloadLinkWord" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;" target="_blank" rel="noopener noreferrer">Download as Docx</a>
-                <a id="downloadLinkJson" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;" target="_blank" rel="noopener noreferrer">Download Log</a>
+                <a id="copyToClipboard" onclick="GPTResearcher.copyToClipboard()" class="btn btn-secondary mt-3"
+                    style="margin-right: 10px;">Copy to clipboard (markdown)</a>
+                <a id="downloadLinkMd" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;"
+                    target="_blank" rel="noopener noreferrer">Download as Markdown</a>
+                <a id="downloadLink" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;" target="_blank"
+                    rel="noopener noreferrer">Download as PDF</a>
+                <a id="downloadLinkWord" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;"
+                    target="_blank" rel="noopener noreferrer">Download as Docx</a>
+                <a id="downloadLinkJson" href="#" class="btn btn-secondary mt-3" style="margin-right: 10px;"
+                    target="_blank" rel="noopener noreferrer">Download Log</a>
             </div>
         </div>
     </main>
@@ -211,12 +256,12 @@
 
         if (input) {
             input.addEventListener('keypress', function (e) {
-            if ((e.key === 'Enter' || e.key === ",") && input.value !== '') {
-                e.preventDefault();
-                GPTResearcher.addTag(input.value);
-                input.value = '';
-            }
-        });
+                if ((e.key === 'Enter' || e.key === ",") && input.value !== '') {
+                    e.preventDefault();
+                    GPTResearcher.addTag(input.value);
+                    input.value = '';
+                }
+            });
         }
     </script>
 </body>

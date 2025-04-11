@@ -10,6 +10,7 @@ fastapi
 python-multipart
 markdown
 langchain
+langchain-core
 langchain_community
 langchain-openai
 tiktoken

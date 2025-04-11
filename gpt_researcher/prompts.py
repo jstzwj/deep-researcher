@@ -92,6 +92,7 @@ You should strive to write the report as long as you can using all relevant and 
 Please follow all of the following guidelines in your report:
 - You MUST determine your own concrete and valid opinion based on the given information. Do NOT defer to general and meaningless conclusions.
 - You MUST write the report with markdown syntax and {report_format} format.
+- Inline formulas in the document are enclosed with $e^{{i \\theta}} = cos\\theta + i sin\\theta$, while single-line formulas use $$e^{{i \\theta}} = cos\\theta + i sin\\theta$$.
 - Use markdown tables when presenting structured data or comparisons to enhance readability.
 - You MUST prioritize the relevance, reliability, and significance of the sources you use. Choose trusted sources over less reliable ones.
 - You must also prioritize new articles over older articles if the source can be trusted.
@@ -172,6 +173,7 @@ def generate_resource_report_prompt(
         "Focus on the relevance, reliability, and significance of each source.\n"
         "Ensure that the report is well-structured, informative, in-depth, and follows Markdown syntax.\n"
         "Use markdown tables and other formatting features when appropriate to organize and present information clearly.\n"
+        "- Inline formulas in the document are enclosed with $e^{{i \\theta}} = cos\\theta + i sin\\theta$, while single-line formulas use $$e^{{i \\theta}} = cos\\theta + i sin\\theta$$.\n"
         "Include relevant facts, figures, and numbers whenever available.\n"
         f"The report should have a minimum length of {total_words} words.\n"
         f"You MUST write the report in the following language: {language}.\n"
@@ -471,6 +473,7 @@ Using the above latest information, Prepare a detailed report introduction on th
 - You must use in-text citation references in {report_format.upper()} format and make it with markdown hyperlink placed at the end of the sentence or paragraph that references them like this: ([in-text citation](url)).
 Assume that the current date is {datetime.now(timezone.utc).strftime('%B %d, %Y')} if required.
 - The output must be in {language} language.
+- Inline formulas in the document are enclosed with $e^{{i \\theta}} = cos\\theta + i sin\\theta$, while single-line formulas use $$e^{{i \\theta}} = cos\\theta + i sin\\theta$$.
 """
 
 

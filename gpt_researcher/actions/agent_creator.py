@@ -1,12 +1,13 @@
 import json
 import re
 import json_repair
+import openai
 from ..utils.llm import create_chat_completion
 from ..prompts import auto_agent_instructions
 from ..config import Config
 
 async def choose_agent(
-    query, cfg: Config, parent_query=None, cost_callback: callable = None, headers=None
+    query: str, cfg: Config, parent_query=None, cost_callback: callable = None, headers=None
 ):
     """
     Chooses the agent automatically
@@ -45,10 +46,19 @@ async def choose_agent(
 
         agent_dict = json.loads(response)
         return agent_dict["server"], agent_dict["agent_role_prompt"]
-
+    except openai.APIConnectionError:
+        return "Default Agent", (
+            "You are an AI critical thinker research assistant. Your sole purpose is to write well written, "
+            "critically acclaimed, objective and structured reports on given text."
+        )
     except Exception as e:
-        return await handle_json_error(response)
-
+        if response is None:
+            return "Default Agent", (
+                "You are an AI critical thinker research assistant. Your sole purpose is to write well written, "
+                "critically acclaimed, objective and structured reports on given text."
+            )
+        else:
+            return await handle_json_error(response)
 
 async def handle_json_error(response: str):
     try:

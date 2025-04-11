@@ -1,15 +1,34 @@
 {
+    "agent_role": "你是一名来自中国的顶级研究员，有着丰富的科研知识，请在调研和写报告的时候使用中文。",
+    "language": "chinese",
+    "total_words": 8192,
+    "deep_research_breadth": 5,
+    "deep_research_depth": 3,
+    "deep_research_concurrency": 4,
+    "max_search_results_per_query": 20,
     "retrievers": [
         {
             "provider": "tavily",
-            "api_key": "tvly-dev-xxxx"
+            "api_key": "tvly-dev-xxxxx"
+        },
+        {
+            "provider": "arxiv",
+            "api_key": ""
+        },
+        {
+            "provider": "duckduckgo",
+            "api_key": ""
+        },
+        {
+            "provider": "semantic_scholar",
+            "api_key": ""
         }
     ],
     "embeddings": [
         {
             "provider": "siliconflow",
             "model": "BAAI/bge-m3",
-            "api_key": "sk-xxxx",
+            "api_key": "sk-xxxxx",
             "base_url": "https://api.siliconflow.cn/v1/"
         }
     ],
@@ -17,7 +36,7 @@
         {
             "provider": "siliconflow",
             "model": "Qwen/Qwen2.5-7B-Instruct",
-            "api_key": "sk-xxxx",
+            "api_key": "sk-xxxxx",
             "base_url": "https://api.siliconflow.cn/v1/",
             "model_size": 7e9,
             "max_length": 8192,
@@ -26,7 +45,7 @@
         {
             "provider": "deepseek",
             "model": "deepseek-chat",
-            "api_key": "sk-xxxx",
+            "api_key": "sk-xxxxx",
             "base_url": "https://api.deepseek.com/v1/",
             "model_size": 685e9,
             "max_length": 8192,

@@ -20,6 +20,7 @@ const GPTResearcher = (() => {
   const startResearch = () => {
     document.getElementById("output").innerHTML = ""
     document.getElementById("reportContainer").innerHTML = ""
+    document.getElementById("reportContent").textContent = ""
     dispose_socket?.()
 
     const imageContainer = document.getElementById("selectedImagesContainer")
@@ -38,7 +39,6 @@ const GPTResearcher = (() => {
   const listenToSockEvents = () => {
     const { protocol, host, pathname } = window.location
     const ws_uri = `${protocol === "https:" ? "wss:" : "ws:"}//${host}${pathname}ws`
-    const converter = new showdown.Converter()
     const socket = new WebSocket(ws_uri)
 
     socket.onmessage = (event) => {
@@ -50,7 +50,7 @@ const GPTResearcher = (() => {
         console.log("Received images:", data) // Debug log
         displaySelectedImages(data)
       } else if (data.type === "report") {
-        writeReport(data, converter)
+        writeReport(data)
       } else if (data.type === "path") {
         updateState("finished")
         updateDownloadLink(data)
@@ -140,16 +140,103 @@ const GPTResearcher = (() => {
 
   const addAgentResponse = (data) => {
     const output = document.getElementById("output")
-    output.innerHTML += '<div class="agent_response">' + data.output + "</div>"
+
+    // Detect message type based on content
+    let messageType = "info" // Default type
+
+    if (data.output) {
+      const message = data.output.toLowerCase()
+
+      // Check for error messages
+      if (
+        message.includes("error") ||
+        message.includes("failed") ||
+        message.includes("❌") ||
+        message.includes("失败") ||
+        message.includes("错误")
+      ) {
+        messageType = "error"
+      }
+      // Check for success messages
+      else if (
+        message.includes("success") ||
+        message.includes("completed") ||
+        message.includes("finished") ||
+        message.includes("✅") ||
+        message.includes("成功") ||
+        message.includes("完成")
+      ) {
+        messageType = "success"
+      }
+      // Check for warning messages
+      else if (
+        message.includes("warning") ||
+        message.includes("caution") ||
+        message.includes("⚠️") ||
+        message.includes("警告")
+      ) {
+        messageType = "warning"
+      }
+      // Check for thinking/processing messages
+      else if (
+        message.includes("thinking") ||
+        message.includes("processing") ||
+        message.includes("searching") ||
+        message.includes("🤔") ||
+        message.includes("思考") ||
+        message.includes("处理") ||
+        message.includes("搜索")
+      ) {
+        messageType = "info"
+      }
+    }
+
+    output.innerHTML += `<div class="agent_response ${messageType}">${data.output}</div>`
     output.scrollTop = output.scrollHeight
     output.style.display = "block"
     updateScroll()
   }
 
-  const writeReport = (data, converter) => {
-    const reportContainer = document.getElementById("reportContainer")
-    const markdownOutput = converter.makeHtml(data.output)
-    reportContainer.innerHTML += markdownOutput
+  const writeReport = (data) => {
+    try {
+      // Get the textarea and container elements
+      const reportContent = document.getElementById("reportContent")
+      const reportContainer = document.getElementById("reportContainer")
+
+      // Append the new markdown content to the textarea
+      reportContent.textContent += data.output
+
+      // Use TeXMe to render the markdown with LaTeX support
+      if (window.texme) {
+        // Render the markdown content
+        const renderedHtml = window.texme.render(reportContent.textContent)
+
+        // Update the report container with the rendered HTML
+        reportContainer.innerHTML = renderedHtml
+        window.MathJax.typesetPromise();
+
+        // Apply custom styling to the rendered content
+        const mainElement = reportContainer.querySelector("main")
+        if (mainElement) {
+          // Remove any default TeXMe styles that might interfere with our custom styling
+          mainElement.style.maxWidth = "none"
+          mainElement.style.margin = "0"
+          mainElement.style.padding = "0"
+          mainElement.style.border = "none"
+          mainElement.style.background = "transparent"
+        }
+      } else {
+        // Fallback if TeXMe is not available
+        console.error("TeXMe library not loaded")
+        reportContainer.innerHTML = `<pre>${data.output}</pre>`
+      }
+    } catch (error) {
+      console.error("Error rendering markdown with TeXMe:", error)
+      // Fallback to plain text if rendering fails
+      const reportContainer = document.getElementById("reportContainer")
+      reportContainer.innerHTML = `<p>Error rendering markdown: ${error.message}</p><pre>${data.output}</pre>`
+    }
+
     updateScroll()
   }
 
@@ -185,15 +272,24 @@ const GPTResearcher = (() => {
   }
 
   const copyToClipboard = () => {
+    // Get the original markdown content from the textarea
+    const reportContent = document.getElementById("reportContent")
+    const markdownContent = reportContent.textContent
+
     const textarea = document.createElement("textarea")
     textarea.id = "temp_element"
     textarea.style.height = 0
     document.body.appendChild(textarea)
-    textarea.value = document.getElementById("reportContainer").innerText
+    textarea.value = markdownContent
     const selector = document.querySelector("#temp_element")
     selector.select()
     document.execCommand("copy")
     document.body.removeChild(textarea)
+
+    // Show a success message
+    addAgentResponse({
+      output: "✅ Markdown copied to clipboard successfully!",
+    })
   }
 
   const updateState = (state) => {
