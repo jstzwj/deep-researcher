@@ -511,6 +511,7 @@ def generate_report_conclusion(query: str, report_content: str, language: str = 
 
 
 report_type_mapping = {
+    ReportType.BasicReport.value: generate_report_prompt,
     ReportType.ResearchReport.value: generate_report_prompt,
     ReportType.ResourceReport.value: generate_resource_report_prompt,
     ReportType.OutlineReport.value: generate_outline_report_prompt,
@@ -520,7 +521,7 @@ report_type_mapping = {
 }
 
 
-def get_prompt_by_report_type(report_type):
+def get_prompt_by_report_type(report_type: str):
     prompt_by_type = report_type_mapping.get(report_type)
     default_report_type = ReportType.ResearchReport.value
     if not prompt_by_type:
