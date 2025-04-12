@@ -1,80 +1,86 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import router from '@/router'
+import axios from 'axios'
+
+// Create axios instance with base URL from .env
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_PATH || 'http://localhost:8000',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
 
 export const useAuthStore = defineStore('auth', () => {
+  const token = ref(null)
   const user = ref(null)
-  const isLoggedIn = ref(false)
 
-  // Initialize from localStorage if available
-  const storedUser = localStorage.getItem('user')
-  if (storedUser) {
-    user.value = JSON.parse(storedUser)
-    isLoggedIn.value = true
+  const login = async (credentials) => {
+    try {
+      const response = await api.post(
+        '/token',
+        new URLSearchParams({
+          username: credentials.username,
+          password: credentials.password,
+          grant_type: 'password',
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      )
+
+      token.value = response.data.access_token
+      user.value = await fetchUser()
+
+      return response.data
+    } catch (error) {
+      throw error
+    }
   }
 
-  function login(email, password) {
-    // This would be an API call in a real application
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Mock successful login
-        const userData = {
-          id: '1',
-          name: 'Jane Smith',
-          email,
-          memberSince: new Date(),
-          plan: 'Premium',
-          reportsGenerated: 27,
+  const register = async (username: string, email: string, password: string) => {
+    try {
+      const response = await api.post('/register', {
+        username,
+        email,
+        password,
+      })
+
+      token.value = response.data.access_token
+      user.value = await fetchUser()
+
+      return response.data
+    } catch (error) {
+      if (error.response) {
+        // Handle specific error messages from backend
+        if (error.response.data.detail) {
+          throw new Error(error.response.data.detail)
         }
-
-        user.value = userData
-        isLoggedIn.value = true
-
-        // Store in localStorage
-        localStorage.setItem('user', JSON.stringify(userData))
-
-        resolve(userData)
-      }, 500)
-    })
+      }
+      throw error
+    }
   }
 
-  function register(name, email, password) {
-    // This would be an API call in a real application
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Mock successful registration
-        const userData = {
-          id: '1',
-          name,
-          email,
-          memberSince: new Date(),
-          plan: 'Free',
-          reportsGenerated: 0,
-        }
-
-        user.value = userData
-        isLoggedIn.value = true
-
-        // Store in localStorage
-        localStorage.setItem('user', JSON.stringify(userData))
-
-        resolve(userData)
-      }, 500)
-    })
+  const fetchUser = async () => {
+    try {
+      const response = await api.get('/users/me', {
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      })
+      return response.data
+    } catch (error) {
+      throw error
+    }
   }
 
-  function logout() {
+  const logout = () => {
+    token.value = null
     user.value = null
-    isLoggedIn.value = false
-    localStorage.removeItem('user')
-    router.push('/login')
+    localStorage.removeItem('authToken')
+    sessionStorage.removeItem('authToken')
   }
 
-  return {
-    user,
-    isLoggedIn,
-    login,
-    register,
-    logout,
-  }
+  return { token, user, login, register, logout, fetchUser }
 })

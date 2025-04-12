@@ -303,7 +303,7 @@ const startResearch = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #7770ee 0%, #7c3aed 100%);
   z-index: -1;
   transform: scaleX(0);
   transform-origin: right;

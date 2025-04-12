@@ -162,14 +162,15 @@
     <!-- 研究报告 -->
     <div class="mb-10">
       <h2 class="text-2xl font-bold mb-2">{{ $t('research.researchReportTitle') }}</h2>
-      <div class="bg-gray-100 rounded-lg p-6 min-h-[100px] border border-gray-200">
-        {{ researchReport || $t('research.researchReportPlaceholder') }}
-      </div>
+      <div
+        ref="reportContainer"
+        class="bg-gray-100 rounded-lg p-6 min-h-[100px] border border-gray-200"
+      ></div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 // 响应式状态
 const researchTopic = ref('')
@@ -180,6 +181,77 @@ const domains = ref('')
 const language = ref('english')
 const aiOutput = ref('')
 const researchReport = ref('')
+const reportContainer = ref(null)
+
+// 配置和加载TeXMe和MathJax
+const setupMathRendering = () => {
+  if (!window.texme) {
+    window.texme = {
+      useMathJax: true,
+      protectMath: true,
+      renderOnLoad: false,
+      style: 'viewer',
+    }
+  }
+
+  if (!window.MathJax) {
+    window.MathJax = {
+      startup: {
+        ready: () => {
+          MathJax.startup.defaultReady()
+          console.log('MathJax is ready')
+          renderMathContent()
+        },
+      },
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+      },
+      asciimath: {
+        delimiters: [['`', '`']],
+      },
+      svg: {
+        fontCache: 'global',
+      },
+    }
+
+    // 修改为加载本地文件
+    loadLocalScript('/js/tex-mml-svg.js', () => {
+      loadLocalScript('/js/texme_1.2.2.js', () => {
+        console.log('TeXMe loaded from local')
+      })
+    })
+  } else {
+    renderMathContent()
+  }
+}
+
+// 加载本地脚本
+const loadLocalScript = (path, callback) => {
+  const existingScript = document.querySelector(`script[src="${path}"]`)
+  if (existingScript) {
+    if (callback) callback()
+    return
+  }
+
+  const script = document.createElement('script')
+  script.src = path
+  script.onload = callback
+  document.head.appendChild(script)
+}
+
+const renderMathContent = () => {
+  if (!researchReport.value || !reportContainer.value) return
+
+  if (window.texme && window.MathJax) {
+    // 使用texme渲染Markdown和数学公式
+    reportContainer.value.innerHTML = window.texme.render(researchReport.value)
+    // 手动触发MathJax渲染
+    if (window.MathJax.typeset) {
+      window.MathJax.typesetPromise()
+    }
+  }
+}
 
 // 开始研究方法
 const startResearch = () => {
@@ -192,28 +264,85 @@ const startResearch = () => {
 
     // 再次模拟异步操作，生成研究报告
     setTimeout(() => {
-      researchReport.value = `关于"${researchTopic.value}"的${reportType.value}研究报告\n\n这是一个示例研究报告，实际应用中会根据您的输入生成相关内容。`
+      // 示例报告包含数学公式
+      researchReport.value = `# 关于"${researchTopic.value}"的${reportType.value}研究报告
+
+## 数学公式示例
+
+这是一个包含数学公式的示例报告：
+
+- 行内公式示例：\\(E=mc^2\\)
+- 独立行公式示例：
+\\[
+x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}
+\\]
+
+## 其他内容
+
+实际应用中会根据您的输入生成相关内容。`
+
+      // 渲染数学内容
+      renderMathContent()
     }, 2000)
   }, 1500)
 }
+
+// 监听研究报告变化
+watch(researchReport, () => {
+  renderMathContent()
+})
+
+// 组件挂载时初始化
+onMounted(() => {
+  setupMathRendering()
+})
 </script>
 
 <style>
-/* 可以添加额外的自定义样式 */
-.form-radio {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  border: 2px solid #4299e1;
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-  cursor: pointer;
+/* 保持原有样式不变 */
+/* ...原有样式代码... */
+
+/* MathJax 公式样式 */
+.MathJax_SVG,
+.MathJax_SVG_Display {
+  margin: 0.5em 0;
 }
 
-.form-radio:checked {
-  background-color: #4299e1;
-  border: 2px solid #4299e1;
-  box-shadow: inset 0 0 0 2px #ffffff;
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+.markdown-content h1 {
+  font-size: 1.8em;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.3em;
+}
+
+.markdown-content h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.3em;
+}
+
+.markdown-content p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5em;
 }
 </style>

@@ -28,7 +28,8 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-from backend.server.server import app
+from backend.server.app import DEEP_RESEARCHER_APP as app
+from backend.server.apis import auth
 
 if __name__ == "__main__":
     import uvicorn

@@ -3,11 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 logger = logging.getLogger(__name__)
+logger.propagate = True
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler()  # Only log to console
+    ]
+)
 
-app = FastAPI()
+DEEP_RESEARCHER_APP = FastAPI()
 
 # Add CORS middleware
-app.add_middleware(
+DEEP_RESEARCHER_APP.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # In production, replace with your frontend domain
     allow_credentials=True,

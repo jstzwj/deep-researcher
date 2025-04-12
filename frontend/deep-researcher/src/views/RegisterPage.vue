@@ -7,7 +7,7 @@
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
           {{ $t('register.or') }}
-          <router-link to="/login" class="font-medium text-primary hover:text-primary-dark">
+          <router-link to="/login" class="font-medium text-violet-600 hover:text-violet-500">
             {{ $t('register.login') }}
           </router-link>
         </p>
@@ -22,7 +22,7 @@
               type="text"
               v-model="name"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm"
               :placeholder="$t('register.name')"
             />
           </div>
@@ -34,7 +34,7 @@
               type="email"
               v-model="email"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              class="appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm"
               :placeholder="$t('register.email')"
             />
           </div>
@@ -46,8 +46,13 @@
               type="password"
               v-model="password"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              @input="validatePassword"
+              class="appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm"
               :placeholder="$t('register.password')"
+              :class="{
+                'border-red-500 dark:border-red-500': passwordError,
+                'border-green-500 dark:border-green-500': passwordValid && password.length > 0,
+              }"
             />
           </div>
           <div>
@@ -60,19 +65,62 @@
               type="password"
               v-model="confirmPassword"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+              @input="validatePassword"
+              class="appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm"
               :placeholder="$t('register.confirmPassword')"
+              :class="{
+                'border-red-500 dark:border-red-500': confirmPasswordError,
+                'border-green-500 dark:border-green-500':
+                  passwordsMatch && confirmPassword.length > 0,
+              }"
             />
+          </div>
+        </div>
+
+        <!-- Password validation feedback -->
+        <div v-if="password.length > 0 || confirmPassword.length > 0" class="space-y-2">
+          <div v-if="passwordError" class="text-red-600 dark:text-red-400 text-sm">
+            {{ passwordError }}
+          </div>
+          <div v-if="confirmPasswordError" class="text-red-600 dark:text-red-400 text-sm">
+            {{ confirmPasswordError }}
+          </div>
+          <div
+            v-if="passwordsMatch && password.length > 0"
+            class="text-green-600 dark:text-green-400 text-sm"
+          >
+            Passwords match!
           </div>
         </div>
 
         <div>
           <button
             type="submit"
-            :disabled="isLoading"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+            :disabled="isLoading || !formValid"
+            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-500 hover:bg-violet-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 disabled:opacity-50 transition-colors duration-200"
           >
-            <span v-if="isLoading">Loading...</span>
+            <span v-if="isLoading">
+              <svg
+                class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </span>
             <span v-else>{{ $t('register.signUp') }}</span>
           </button>
         </div>
@@ -82,10 +130,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/store/auth'
-import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -95,29 +142,54 @@ const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const isLoading = ref(false)
+const passwordError = ref('')
+const confirmPasswordError = ref('')
 
 const passwordsMatch = computed(() => {
-  return password.value === confirmPassword.value
+  return password.value === confirmPassword.value && password.value.length > 0
 })
 
-const handleRegister = async () => {
-  if (!name.value || !email.value || !password.value) {
-    return
+const passwordValid = computed(() => {
+  return password.value.length >= 8 && !passwordError.value
+})
+
+const formValid = computed(() => {
+  return name.value && email.value && passwordValid.value && passwordsMatch.value
+})
+
+const validatePassword = () => {
+  // Reset errors
+  passwordError.value = ''
+  confirmPasswordError.value = ''
+
+  // Validate password strength
+  if (password.value.length > 0 && password.value.length < 8) {
+    passwordError.value = 'Password must be at least 8 characters'
   }
 
-  if (!passwordsMatch.value) {
-    alert('Passwords do not match')
-    return
+  // Validate password match
+  if (confirmPassword.value.length > 0 && !passwordsMatch.value) {
+    confirmPasswordError.value = 'Passwords do not match'
   }
+}
+
+const handleRegister = async () => {
+  if (!formValid.value) return
 
   isLoading.value = true
 
   try {
     await authStore.register(name.value, email.value, password.value)
+    // 注册成功后跳转到首页或其他适当页面
     router.push('/')
   } catch (error) {
     console.error('Registration failed:', error)
-    // Handle registration error
+    // 显示错误信息给用户
+    if (error.message.includes('already exists')) {
+      passwordError.value = 'Username or email already exists'
+    } else {
+      passwordError.value = 'Registration failed. Please try again.'
+    }
   } finally {
     isLoading.value = false
   }

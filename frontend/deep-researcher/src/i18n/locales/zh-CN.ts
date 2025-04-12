@@ -14,6 +14,7 @@ export default {
     rememberMe: '记住我',
     forgotPassword: '忘记密码？',
     signIn: '登录',
+    loading: '加载中...',
   },
   register: {
     title: '创建新账户',
@@ -123,6 +124,7 @@ export default {
     subtitle: '个人信息和账户设置',
     name: '姓名',
     email: '电子邮箱地址',
+    bio: '简介',
     memberSince: '会员起始时间',
     plan: '订阅计划',
     reportsGenerated: '已生成的报告数量',

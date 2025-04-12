@@ -1,13 +1,15 @@
 import json
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 import time
+import datetime
 
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, File, UploadFile, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
+
 from pydantic import BaseModel
 
 from backend.server.websocket_manager import WebSocketManager
@@ -17,29 +19,13 @@ from backend.server.server_utils import (
     execute_multi_agents, handle_websocket_communication
 )
 
+
 from backend.server.websocket_manager import run_agent
 from backend.utils import write_md_to_word, write_md_to_pdf
 from gpt_researcher.utils.logging_config import setup_research_logging
 from gpt_researcher.utils.enum import Tone
 
-import logging
-
-# Get logger instance
-logger = logging.getLogger(__name__)
-
-# Don't override parent logger settings
-logger.propagate = True
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler()  # Only log to console
-    ]
-)
-
 # Models
-
 
 class ResearchRequest(BaseModel):
     task: str
@@ -72,9 +58,6 @@ class ConfigRequest(BaseModel):
     DEEPSEEK_API_KEY: str
 
 
-# App initialization
-app = FastAPI()
-
 # Static files and templates
 app.mount("/site", StaticFiles(directory="./frontend"), name="site")
 app.mount("/static", StaticFiles(directory="./frontend/static"), name="static")
@@ -83,21 +66,11 @@ templates = Jinja2Templates(directory="./frontend")
 # WebSocket manager
 manager = WebSocketManager()
 
-# Middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Constants
 DOC_PATH = os.getenv("DOC_PATH", "./my-docs")
 
 # Startup event
-
-
 @app.on_event("startup")
 def startup_event():
     os.makedirs("outputs", exist_ok=True)
@@ -105,6 +78,7 @@ def startup_event():
     # os.makedirs(DOC_PATH, exist_ok=True)  # Commented out to avoid creating the folder if not needed
 
 # Routes
+from .apis.auth import *
 @app.get("/login.html")
 async def read_root(request: Request):
     return templates.TemplateResponse("login.html", {"request": request, "report": None})
