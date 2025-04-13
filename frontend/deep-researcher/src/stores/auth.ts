@@ -10,11 +10,16 @@ const api = axios.create({
   },
 })
 
+interface Credentials {
+  username: string
+  password: string
+}
+
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(null)
   const user = ref(null)
 
-  const login = async (credentials) => {
+  const login = async (credentials: Credentials) => {
     try {
       const response = await api.post(
         '/token',
@@ -51,7 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = await fetchUser()
 
       return response.data
-    } catch (error) {
+    } catch (error: any) {
       if (error.response) {
         // Handle specific error messages from backend
         if (error.response.data.detail) {
