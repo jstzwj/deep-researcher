@@ -1,7 +1,9 @@
+from enum import unique
 import os
 from peewee import *
 import datetime
 from passlib.context import CryptContext
+import uuid
 
 # Initialize password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -42,6 +44,7 @@ class BaseModel(Model):
         database = database
 
 class User(BaseModel):
+    id = CharField(max_length=64, unique=True, default=lambda: str(uuid.uuid4()))
     username = CharField(unique=True)
     email = CharField(unique=True)
     hashed_password = CharField()
@@ -51,19 +54,39 @@ class User(BaseModel):
     def verify_password(self, plain_password):
         return pwd_context.verify(plain_password, self.hashed_password)
 
-class ResearchHistory(BaseModel):
-    user = ForeignKeyField(User, backref='research_history')
+class Research(BaseModel):
+    id = CharField(max_length=64, unique=True, default=lambda: str(uuid.uuid4()))
+    user = ForeignKeyField(User, backref='researches')
     task = TextField()
     report_type = TextField()
     report_source = TextField()
-    research_id = CharField()
     created_at = DateTimeField(default=datetime.datetime.now)
+
+class ResearchLog(BaseModel):
+    id = CharField(max_length=64, unique=True, default=lambda: str(uuid.uuid4()))
+    research = ForeignKeyField(Research, backref='logs')
+    user = ForeignKeyField(User)
+    action = TextField()
+    details = TextField(null=True)
+    created_at = DateTimeField(default=datetime.datetime.now)
+
+class Report(BaseModel):
+    id = CharField(max_length=64, unique=True, default=lambda: str(uuid.uuid4()))
+    research = ForeignKeyField(Research, backref='reports')
+    user = ForeignKeyField(User)
+    task = TextField()
+    report_type = TextField()
+    report_source = TextField()
+    created_at = DateTimeField(default=datetime.datetime.now)
+    md_path = TextField(null=True)
     docx_path = TextField(null=True)
     pdf_path = TextField(null=True)
+    finished = BooleanField()
+
 
 def create_tables():
     with database:
-        database.create_tables([User, ResearchHistory])
+        database.create_tables([User, User, Research, ResearchLog, Report])
 
 def initialize_database():
     create_tables()
@@ -77,6 +100,7 @@ async def create_user(username: str, email: str, password: str):
     hashed_password = get_password_hash(password)
     try:
         user = User.create(
+            id=str(uuid.uuid4()),
             username=username,
             email=email,
             hashed_password=hashed_password
@@ -108,20 +132,6 @@ async def authenticate_user(username: str, password: str):
     if not user.verify_password(password):
         return None
     return user
-
-async def add_research_history(user: User, research_data: dict):
-    return ResearchHistory.create(
-        user=user,
-        task=research_data['task'],
-        report_type=research_data['report_type'],
-        report_source=research_data['report_source'],
-        research_id=research_data['research_id'],
-        docx_path=research_data.get('docx_path'),
-        pdf_path=research_data.get('pdf_path')
-    )
-
-async def get_user_research_history(user: User):
-    return list(ResearchHistory.select().where(ResearchHistory.user == user).order_by(ResearchHistory.created_at.desc()))
 
 # Initialize database when this module is imported
 initialize_database()

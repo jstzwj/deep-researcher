@@ -22,3 +22,8 @@ DEEP_RESEARCHER_APP.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+from .apis import auth, research
+
+DEEP_RESEARCHER_APP.include_router(auth.router)
+DEEP_RESEARCHER_APP.include_router(research.router)

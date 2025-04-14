@@ -3,18 +3,17 @@ import datetime
 from typing import Dict, List, Optional
 from pydantic import BaseModel
 
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status, Depends, APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 
 from backend.server.model import (
-    User, ResearchHistory,
+    User, Research, Report, ResearchLog,
     create_user, get_user_by_username, 
-    authenticate_user, add_research_history,
-    get_user_research_history
+    authenticate_user
 )
 
-from ..app import DEEP_RESEARCHER_APP as app
+router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
@@ -45,6 +44,14 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
 
+class ResearchHistoryItem(BaseModel):
+    id: str
+    task: str
+    report_type: str
+    created_at: datetime.datetime
+    md_path: Optional[str] = None
+    docx_path: Optional[str] = None
+    pdf_path: Optional[str] = None
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -79,7 +86,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
     return user
 
-@app.post("/register", response_model=Token)
+@router.post("/register", response_model=Token)
 async def register(user_data: UserRegister):
     try:
         user = await create_user(
@@ -99,7 +106,7 @@ async def register(user_data: UserRegister):
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.post("/token", response_model=Token)
+@router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await authenticate_user(form_data.username, form_data.password)
     if not user:
@@ -114,22 +121,37 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/users/me")
+@router.get("/users/me")
 async def read_users_me(current_user: User = Depends(get_current_user)):
     return {
+        "id": current_user.id,
         "username": current_user.username,
         "email": current_user.email,
-        "is_active": current_user.is_active
+        "is_active": current_user.is_active,
+        "created_at": current_user.created_at
     }
 
-@app.get("/history")
+@router.get("/history")
 async def get_history(current_user: User = Depends(get_current_user)):
-    history = await get_user_research_history(current_user)
-    return {"history": [
-        {
-            "task": item.task,
-            "report_type": item.report_type,
-            "created_at": item.created_at,
-            "research_id": item.research_id
-        } for item in history
-    ]}
+    # Get all researches for the user
+    researches = Research.select().where(Research.user == current_user)
+    
+    # Get all reports for each research
+    history = []
+    for research in researches:
+        reports = Report.select().where(Report.research == research)
+        for report in reports:
+            history.append({
+                "id": report.id,
+                "task": report.task,
+                "report_type": report.report_type,
+                "created_at": report.created_at,
+                "md_path": report.md_path,
+                "docx_path": report.docx_path,
+                "pdf_path": report.pdf_path
+            })
+    
+    # Sort by creation date descending
+    history.sort(key=lambda x: x["created_at"], reverse=True)
+    
+    return {"history": history}

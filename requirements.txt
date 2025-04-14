@@ -33,6 +33,7 @@ langgraph
 peewee==3.17.9
 passlib==1.7.4
 python-jose[cryptography]
+pika=1.3.2
 # uncomment for testing
 # pytest
 # pytest-asyncio

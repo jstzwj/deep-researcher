@@ -115,6 +115,13 @@ export default {
     researchReportTitle: '研究报告',
     researchReportPlaceholder: '研究报告将显示在这里...',
   },
+  report: {
+    title: '研究报告',
+    backButton: '返回',
+    downloadButton: '下载',
+    downloadMarkdownButton: '下载Markdown',
+    downloadPdfButton: '下载PDF',
+  },
   history: {
     title: '研究历史',
     subtitle: '查看您以往的研究报告',

@@ -22,7 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
   const login = async (credentials: Credentials) => {
     try {
       const response = await api.post(
-        '/token',
+        '/api/auth/token',
         new URLSearchParams({
           username: credentials.username,
           password: credentials.password,
@@ -46,7 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const register = async (username: string, email: string, password: string) => {
     try {
-      const response = await api.post('/register', {
+      const response = await api.post('/api/auth/register', {
         username,
         email,
         password,
@@ -69,7 +69,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const fetchUser = async () => {
     try {
-      const response = await api.get('/users/me', {
+      const response = await api.get('/api/auth/users/me', {
         headers: {
           Authorization: `Bearer ${token.value}`,
         },

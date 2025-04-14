@@ -18,11 +18,11 @@
             </router-link>
           </div>
         </div>
-        <div class="flex items-center">
+        <div class="flex items-center mr-4">
           <!-- Dark mode toggle -->
           <button
             @click="toggleDarkMode"
-            class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary mr-4"
+            class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
             :aria-label="darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
           >
             <svg
@@ -45,13 +45,11 @@
               viewBox="0 0 20 20"
               fill="currentColor"
             >
-              <path
-                d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-              />
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
             </svg>
           </button>
 
-          <LanguageSwitcher class="mr-4" />
+          <LanguageSwitcher class="mx-4" />
 
           <template v-if="authStore.isLoggedIn">
             <!-- Profile dropdown -->
